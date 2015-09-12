@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/std_del"
+        android:icon="@mipmap/ic_clear_white_36dp"
+        android:orderInCategory="80"
+        android:title="删除"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/std_save"
+        android:icon="@mipmap/ic_check_white_36dp"
+        android:orderInCategory="90"
+        android:title="保存"
+        app:showAsAction="always" />
+</menu>
