@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:scaleType="centerInside"
-            android:src="@mipmap/p50627184216" />
+            android:src="@mipmap/pictest" />
 
         <ImageButton
             android:id="@+id/std_choose_pic_btn"
@@ -55,7 +55,6 @@
             android:id="@+id/std_name_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="李雷"
             android:singleLine="true"
             android:textSize="22sp" />
     </LinearLayout>
@@ -77,7 +76,6 @@
             android:id="@+id/std_phone_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="17012345678"
             android:inputType="phone"
             android:singleLine="true"
             android:textSize="22sp" />

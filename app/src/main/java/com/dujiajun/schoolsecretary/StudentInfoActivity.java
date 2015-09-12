@@ -50,6 +50,11 @@ public class StudentInfoActivity extends AppCompatActivity {
                 edit_remark.setText(remark);
             }
         }
+        else{
+            edit_name.setText("");
+            edit_phone.setText("");
+            edit_remark.setText("");
+        }
     }
 
     protected void UIInit() {
@@ -123,13 +128,13 @@ public class StudentInfoActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.std_del:
-                s += "点击删除";
+                finish();
                 break;
             case R.id.std_save:
                 s += "点击保存";
+                Toast.makeText(StudentInfoActivity.this, s, Toast.LENGTH_SHORT).show();
                 break;
         }
-        Toast.makeText(StudentInfoActivity.this, s, Toast.LENGTH_SHORT).show();
         return super.onOptionsItemSelected(item);
     }
 }

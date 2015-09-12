@@ -68,6 +68,7 @@ public class ManageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(ManageActivity.this, "点击添加", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ManageActivity.this, StudentInfoActivity.class);
+                intent.putExtra("isEdit", false);
                 startActivity(intent);
             }
         });
