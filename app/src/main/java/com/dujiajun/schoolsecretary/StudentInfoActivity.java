@@ -1,6 +1,9 @@
 package com.dujiajun.schoolsecretary;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +25,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class StudentInfoActivity extends AppCompatActivity {
     private static final int CROP_PHOTO = 2;
@@ -29,32 +34,38 @@ public class StudentInfoActivity extends AppCompatActivity {
     private ImageButton img_btn1;
     private ImageView imgview1;
     private Uri imguri;
+    private MyDatabaseHelper dbHelper;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
         UIInit();
+        dbHelper = new MyDatabaseHelper(this, "student.db", null, 1);
+        db = dbHelper.getWritableDatabase();
         Intent i = getIntent();
         if (i.getBooleanExtra("isEdit", false)) {
             String name = i.getStringExtra("name");
             String phone = i.getStringExtra("phone");
             String remark = i.getStringExtra("remark");
-            if (name.equals("")) {
+            if (!name.equals("")) {
                 edit_name.setText(name);
             }
-            if (phone.equals("")) {
+            if (!phone.equals("")) {
                 edit_phone.setText(phone);
             }
-            if (remark.equals("")) {
+            if (!remark.equals("")) {
                 edit_remark.setText(remark);
             }
         }
         else{
+            toolbar.setTitle("添加学生");
             edit_name.setText("");
             edit_phone.setText("");
             edit_remark.setText("");
         }
+
     }
 
     protected void UIInit() {
@@ -124,15 +135,34 @@ public class StudentInfoActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        String s = "";
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.std_del:
                 finish();
                 break;
             case R.id.std_save:
-                s += "点击保存";
-                Toast.makeText(StudentInfoActivity.this, s, Toast.LENGTH_SHORT).show();
+                String name = edit_name.getText().toString();
+                String phone = edit_phone.getText().toString();
+                String remark = edit_remark.getText().toString();
+                if (name.equals("")) {
+                    Toast.makeText(StudentInfoActivity.this, "没有填写姓名", Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    String sql = "insert into Students (name,phone,remark) values('"
+                            + name + "','"
+                            + phone + "','"
+                            + remark + "');";
+                    byte[] val = sql.getBytes();
+                    try {
+                        sql = new String(val, "utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    db.execSQL(sql);
+                    Toast.makeText(StudentInfoActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
                 break;
         }
         return super.onOptionsItemSelected(item);
