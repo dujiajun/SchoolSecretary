@@ -152,8 +152,8 @@ public class StudentInfoActivity extends AppCompatActivity {
                             + name + "','"
                             + phone + "','"
                             + remark + "');";
-                    byte[] val = sql.getBytes();
                     try {
+                        byte[] val = sql.getBytes();
                         sql = new String(val, "utf-8");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();

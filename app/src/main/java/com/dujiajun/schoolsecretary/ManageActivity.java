@@ -39,13 +39,18 @@ public class ManageActivity extends AppCompatActivity {
         stdlist = new ArrayList<>();
         dbHelper = new MyDatabaseHelper(this, "student.db", null, 1);
         db = dbHelper.getWritableDatabase();
+        ListRefresh();
+    }
+
+    private void ListRefresh() {
+        std_names.clear();
         Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 try {
-                    String name = new String(cursor.getBlob(cursor.getColumnIndex("name")), "gb2312");
-                    String phone = new String(cursor.getBlob(cursor.getColumnIndex("phone")), "gb2312");
-                    String remark = new String(cursor.getBlob(cursor.getColumnIndex("remark")), "gb2312");
+                    String name = new String(cursor.getBlob(cursor.getColumnIndex("name")), "utf-8");
+                    String phone = new String(cursor.getBlob(cursor.getColumnIndex("phone")), "utf-8");
+                    String remark = new String(cursor.getBlob(cursor.getColumnIndex("remark")), "utf-8");
                     stdlist.add(new Student(name, phone, remark));
                     std_names.add(name);
                 } catch (UnsupportedEncodingException e) {
@@ -57,6 +62,12 @@ public class ManageActivity extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         cursor.close();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ListRefresh();
     }
 
     protected void UIInit() {
@@ -79,16 +90,18 @@ public class ManageActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ManageActivity.this, StudentInfoActivity.class);
                 intent.putExtra("isEdit", true);
-                intent.putExtra("name", arrayAdapter.getItem(position));
-                intent.putExtra("phone", "18888888888");
-                intent.putExtra("remark", "成绩优异，乐于助人。");
+                intent.putExtra("name", stdlist.get(position).getName());
+                intent.putExtra("phone", stdlist.get(position).getPhone());
+                intent.putExtra("remark", stdlist.get(position).getRemark());
                 startActivity(intent);
             }
         });
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ManageActivity.this, arrayAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ManageActivity.this, arrayAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+                db.execSQL("delete from students where name = '?'", new Object[]{std_names.get(position)});
+                ListRefresh();
                 return false;
             }
         });
