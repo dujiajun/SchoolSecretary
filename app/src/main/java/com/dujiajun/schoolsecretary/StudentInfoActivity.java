@@ -152,12 +152,6 @@ public class StudentInfoActivity extends AppCompatActivity {
                             + name + "','"
                             + phone + "','"
                             + remark + "');";
-                    try {
-                        byte[] val = sql.getBytes();
-                        sql = new String(val, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
                     db.execSQL(sql);
                     Toast.makeText(StudentInfoActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
                     finish();

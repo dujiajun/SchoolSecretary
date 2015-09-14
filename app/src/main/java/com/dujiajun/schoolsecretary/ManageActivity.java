@@ -10,6 +10,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,24 +46,21 @@ public class ManageActivity extends AppCompatActivity {
 
     private void ListRefresh() {
         std_names.clear();
+        stdlist.clear();
         Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
+        //Log.d("TAG","after query");
         if (cursor.moveToFirst()) {
             do {
-                try {
-                    String name = new String(cursor.getBlob(cursor.getColumnIndex("name")), "utf-8");
-                    String phone = new String(cursor.getBlob(cursor.getColumnIndex("phone")), "utf-8");
-                    String remark = new String(cursor.getBlob(cursor.getColumnIndex("remark")), "utf-8");
-                    stdlist.add(new Student(name, phone, remark));
-                    std_names.add(name);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                //Log.d("TAG", name + "," + phone + "," + remark);
-
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String phone = cursor.getString(cursor.getColumnIndex("phone"));
+                String remark = cursor.getString(cursor.getColumnIndex("remark"));
+                //Log.d("TAG",name+"|"+phone+"|"+remark);
+                stdlist.add(new Student(name, phone, remark));
+                std_names.add(name);
             } while (cursor.moveToNext());
         }
         cursor.close();
+        arrayAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -99,9 +98,11 @@ public class ManageActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(ManageActivity.this, arrayAdapter.getItem(position), Toast.LENGTH_SHORT).show();
-                db.execSQL("delete from students where name = '?'", new Object[]{std_names.get(position)});
+                //
+                String sql = "delete from students where name = '" + stdlist.get(position).getName() + "'";
+                db.execSQL(sql);
                 ListRefresh();
+                Toast.makeText(ManageActivity.this,"删除成功", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -115,5 +116,24 @@ public class ManageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_manage, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+
+
+        return super.onOptionsItemSelected(item);
     }
 }
