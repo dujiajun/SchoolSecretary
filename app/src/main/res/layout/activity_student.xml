@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_margin="5dp"
             android:background="#00000000"
             android:src="@mipmap/ic_pageview_white_36dp" />
