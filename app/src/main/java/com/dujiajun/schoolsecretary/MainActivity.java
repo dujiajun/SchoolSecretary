@@ -54,9 +54,12 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menu_drawer2: {
                         Intent intent = new Intent(MainActivity.this, ManageActivity.class);
                         startActivity(intent);
+                        break;
                     }
                     case R.id.menu_drawer3: {
-
+                        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                        startActivity(intent);
+                        break;
                     }
                     case R.id.menu_drawer4: {
 
