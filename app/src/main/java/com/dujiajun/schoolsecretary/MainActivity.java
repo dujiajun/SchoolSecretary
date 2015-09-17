@@ -1,10 +1,16 @@
 package com.dujiajun.schoolsecretary;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,10 +19,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -32,8 +39,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         UIInit();
 
+
+        localBroadcastManager= LocalBroadcastManager.getInstance(this);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("com.dujiajun.dbstools.CHANGE_USERNAME_BROADCAST");
+        localReceiver = new LocalReceiver();
+        localBroadcastManager.registerReceiver(localReceiver, intentFilter);
+
+    }
+    private LocalReceiver localReceiver;
+    private LocalBroadcastManager localBroadcastManager;
+    private IntentFilter intentFilter;
+    private TextView text_username;
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+            int itemId = menuItem.getItemId();
+            switch (itemId) {
+                case R.id.menu_drawer1: {
+
+                }
+                case R.id.menu_drawer2: {
+                    Intent intent = new Intent(MainActivity.this, ManageActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case R.id.menu_drawer3: {
+                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case R.id.menu_drawer4: {
+
+                }
+
+            }
+            drawerLayout.closeDrawers();
+            return false;
     }
 
+    class LocalReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            text_username.setText(intent.getStringExtra("username"));
+
+        }
+    }
     protected void UIInit() {
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
@@ -43,33 +95,7 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.syncState();
         drawerLayout.setDrawerListener(drawerToggle);
         navigationView = (NavigationView) findViewById(R.id.main_navigation);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                int itemId = menuItem.getItemId();
-                switch (itemId) {
-                    case R.id.menu_drawer1: {
-
-                    }
-                    case R.id.menu_drawer2: {
-                        Intent intent = new Intent(MainActivity.this, ManageActivity.class);
-                        startActivity(intent);
-                        break;
-                    }
-                    case R.id.menu_drawer3: {
-                        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                        startActivity(intent);
-                        break;
-                    }
-                    case R.id.menu_drawer4: {
-
-                    }
-
-                }
-                drawerLayout.closeDrawers();
-                return false;
-            }
-        });
+        navigationView.setNavigationItemSelectedListener(this);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
         ArrayList<Fragment> fragments = new ArrayList<>();
@@ -83,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, strings);
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        text_username = (TextView) findViewById(R.id.drawer_username);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        text_username.setText(preferences.getString("username","NONE"));
     }
 
     @Override

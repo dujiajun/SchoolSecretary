@@ -17,6 +17,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <receiver android:name=".MyBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.dujiajun.dbstools.CHANGE_USERNAME_BROADCAST"/>
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
