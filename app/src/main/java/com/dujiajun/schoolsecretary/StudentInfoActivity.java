@@ -1,6 +1,7 @@
 package com.dujiajun.schoolsecretary;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -75,7 +77,17 @@ public class StudentInfoActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                new AlertDialog.Builder(StudentInfoActivity.this)
+                        .setTitle("确定离开")
+                        .setMessage("所做的修改将不会被保存，确定离开？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
             }
         });
         edit_name = (EditText) findViewById(R.id.std_name_edit);
@@ -137,9 +149,36 @@ public class StudentInfoActivity extends AppCompatActivity {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         switch (id) {
-            case R.id.std_del:
-                finish();
+            case R.id.std_del: {
+                if(isEdit) {
+                    new AlertDialog.Builder(StudentInfoActivity.this)
+                            .setTitle("确定删除")
+                            .setMessage("删除后将不能恢复，确定删除？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String sql = "delete from students where name = '" + originname + "'";
+                                    db.execSQL(sql);
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+                }else{
+                    new AlertDialog.Builder(StudentInfoActivity.this)
+                            .setTitle("确定离开")
+                            .setMessage("所做的修改将不会被保存，确定离开？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+                }
                 break;
+            }
             case R.id.std_save:
                 String name = edit_name.getText().toString();
                 String phone = edit_phone.getText().toString();

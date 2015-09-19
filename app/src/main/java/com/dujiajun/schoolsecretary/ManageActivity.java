@@ -95,7 +95,7 @@ public class ManageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 //
@@ -105,7 +105,7 @@ public class ManageActivity extends AppCompatActivity {
                 Toast.makeText(ManageActivity.this,"删除成功", Toast.LENGTH_SHORT).show();
                 return false;
             }
-        });
+        });*/
         fabtn_add = (FloatingActionButton) findViewById(R.id.mng_add_btn);
         fabtn_add.setOnClickListener(new View.OnClickListener() {
             @Override
