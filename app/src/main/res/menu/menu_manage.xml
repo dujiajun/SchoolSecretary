@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
+    <!--<item
         android:id="@+id/mng_refresh"
         android:orderInCategory="90"
         android:title="刷新"
@@ -12,5 +12,5 @@
         android:orderInCategory="80"
         android:title="搜索"
         android:icon="@mipmap/ic_search_white_36dp"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
 </menu>

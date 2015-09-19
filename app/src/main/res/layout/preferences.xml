@@ -3,16 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="基本">
+        <!--
         <CheckBoxPreference
             android:title="显示广告"
             android:defaultValue="true"
             android:key="showad" />
+            -->
         <EditTextPreference
             android:title="用户名"
             android:summary="输入要显示的用户名"
             android:key="username"
             />
     </PreferenceCategory>
+    <!--
     <PreferenceCategory android:title="抽签">
         <SwitchPreference
             android:title="朗读结果"
@@ -27,4 +30,5 @@
             android:key="save_result"
             android:summary="在点名完成之后自动保存点名的结果"/>
     </PreferenceCategory>
+    -->
 </PreferenceScreen>

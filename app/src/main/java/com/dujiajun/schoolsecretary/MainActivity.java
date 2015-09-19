@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             int itemId = menuItem.getItemId();
             switch (itemId) {
                 case R.id.menu_drawer1: {
-
+                    break;
                 }
                 case R.id.menu_drawer2: {
                     Intent intent = new Intent(MainActivity.this, ManageActivity.class);
@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
                 }
                 case R.id.menu_drawer4: {
-
+                    Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                    startActivity(intent);
+                    break;
                 }
 
             }

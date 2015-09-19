@@ -56,6 +56,7 @@ public class DianFragment extends Fragment {
         dian_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                weidao.clear();
                 if(std_names.size()==0){
                     Toast.makeText(getActivity(), "还没有学生", Toast.LENGTH_SHORT).show();
                     return;
