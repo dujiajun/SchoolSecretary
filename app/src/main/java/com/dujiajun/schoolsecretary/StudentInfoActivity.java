@@ -97,7 +97,8 @@ public class StudentInfoActivity extends AppCompatActivity {
         img_btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file1 = new File(Environment.getExternalStorageDirectory(), "img.jpg");
+                Toast.makeText(StudentInfoActivity.this, "该功能尚在开发中，敬请期待", Toast.LENGTH_SHORT).show();
+                /*File file1 = new File(Environment.getExternalStorageDirectory(), "img.jpg");
                 try {
                     if (file1.exists()) {
                         file1.delete();
@@ -112,7 +113,7 @@ public class StudentInfoActivity extends AppCompatActivity {
                 intent.putExtra("crop", true);
                 intent.putExtra("scale", true);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imguri);
-                startActivityForResult(intent, CROP_PHOTO);
+                startActivityForResult(intent, CROP_PHOTO);*/
             }
         });
         imgview1 = (ImageView) findViewById(R.id.std_pic);

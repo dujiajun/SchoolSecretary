@@ -1,8 +1,10 @@
 package com.dujiajun.schoolsecretary;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,13 +12,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import java.net.URL;
+
 /**
  * Created by 杜佳骏 on 2015/9/19 0019.
  */
 public class AboutActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private TextView ver_text;
+    private TextView ver_text,weibo_text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,15 @@ public class AboutActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        weibo_text = (TextView) findViewById(R.id.about_weibo);
+        weibo_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("http://weibo.com/u/2789358903");
+                Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                startActivity(intent);
 
+            }
+        });
     }
 }

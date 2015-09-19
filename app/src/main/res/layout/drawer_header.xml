@@ -4,7 +4,7 @@
     android:layout_height="200dp"
     android:background="@mipmap/drawer_background">
 
-    <ImageView
+    <!--<ImageView
         android:id="@+id/drawer_userlogo"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -14,7 +14,7 @@
         android:layout_marginBottom="40dp"
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_launcher" />-->
 
     <TextView
         android:id="@+id/drawer_username"

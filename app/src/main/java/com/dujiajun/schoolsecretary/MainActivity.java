@@ -101,13 +101,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
         ArrayList<Fragment> fragments = new ArrayList<>();
-        MainFragment fragment1 = new MainFragment();
+        //MainFragment fragment1 = new MainFragment();
         ChouFragment fragment2 = new ChouFragment();
         DianFragment fragment3 = new DianFragment();
-        fragments.add(fragment1);
+        //fragments.add(fragment1);
         fragments.add(fragment2);
         fragments.add(fragment3);
-        String[] strings = {"首页", "抽签", "点名"};
+        //String[] strings = {"首页", "抽签", "点名"};
+        String[] strings = { "抽签", "点名"};
         pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, strings);
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         text_username = (TextView) findViewById(R.id.drawer_username);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        text_username.setText(preferences.getString("username","NONE"));
+        text_username.setText(preferences.getString("username","小秘用户"));
     }
 
     @Override
@@ -133,7 +134,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-
+        switch (id){
+            case R.id.action_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "校园小秘Android版欢迎您的使用。\n开发者微博：http://weibo.com/u/2789358903");
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent,"分享"));
+                break;
+        }
 
         return super.onOptionsItemSelected(item);
     }
