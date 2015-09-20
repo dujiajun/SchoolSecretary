@@ -22,12 +22,17 @@ public class ChouFragment extends Fragment {
     private Button chou_btn;
     private TextView main_text;
     private int tmp = 0;
+    private ArrayList<String> std_names;
+    private MyDatabaseHelper dbHelper;
+    private SQLiteDatabase db;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chou, container, false);
         Init();
         return view;
     }
+
     private void Init(){
         main_text = (TextView) view.findViewById(R.id.chou_name);
         chou_btn = (Button) view.findViewById(R.id.chou_btn);
@@ -69,7 +74,7 @@ public class ChouFragment extends Fragment {
             }
         });
 
-        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 1);
+        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 2);
         db = dbHelper.getWritableDatabase();
 
         std_names = new ArrayList<>();
@@ -97,9 +102,5 @@ public class ChouFragment extends Fragment {
         }
         cursor.close();
     }
-
-    private ArrayList<String> std_names;
-    private MyDatabaseHelper dbHelper;
-    private SQLiteDatabase db;
 
 }

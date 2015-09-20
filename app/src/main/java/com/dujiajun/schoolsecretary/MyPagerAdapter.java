@@ -11,9 +11,10 @@ import java.util.ArrayList;
 public class MyPagerAdapter extends FragmentPagerAdapter {
 
     private ArrayList<Fragment> fragmentList;
-    private String[] titles;
+    private ArrayList<String> titles;
+    private int mCount;
 
-    public MyPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, String[] strings) {
+    public MyPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, ArrayList<String> strings) {
         super(fm);
         this.fragmentList = fragments;
         this.titles = strings;
@@ -26,12 +27,23 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return titles[position];
+        return titles.get(position);
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return ((Fragment) object).getView() == view;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        mCount = getCount();
+        super.notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 
     @Override

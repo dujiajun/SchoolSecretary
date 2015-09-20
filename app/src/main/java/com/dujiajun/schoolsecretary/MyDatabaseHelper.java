@@ -10,8 +10,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String CREATE_STD = "create table Students ("
             + "id integer primary key autoincrement,"
             + "name text,"
+            + "classname text,"
             + "phone text,"
             + "remark text);";
+
     private Context mContext;
 
     public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -22,11 +24,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_STD);
-        Toast.makeText(mContext, "成功创建数据库", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, "成功创建数据库", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        switch (oldVersion) {
+            case 1:
+                db.execSQL("alter table students add column classname text");
+        }
     }
 }

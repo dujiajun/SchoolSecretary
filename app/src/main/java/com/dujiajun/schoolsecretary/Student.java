@@ -7,17 +7,28 @@ public class Student {
     private String name;
     private String phone;
     private String remark;
+    private String classname;
 
-    public Student(String name, String phone, String remark) {
+    public Student(String name, String phone, String remark, String classname) {
         this.name = name;
         this.phone = phone;
         this.remark = remark;
+        this.classname = classname;
     }
 
-    public Student(String name) {
+    public Student(String name, String classname) {
         this.name = name;
         this.phone = "";
         this.remark = "";
+        this.classname = classname;
+    }
+
+    public String getClassname() {
+        return classname;
+    }
+
+    public void setClassname(String classname) {
+        this.classname = classname;
     }
 
     public String getName() {

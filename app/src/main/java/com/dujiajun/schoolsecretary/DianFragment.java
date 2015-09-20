@@ -17,13 +17,6 @@ import java.util.ArrayList;
 
 public class DianFragment extends Fragment {
     private View view;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_dian, container, false);
-        Init();
-        return view;
-    }
     private Button dian_btn,dao_btn,weidao_btn;
     private TextView main_text;
     private ArrayList<String> std_names;
@@ -31,9 +24,18 @@ public class DianFragment extends Fragment {
     private MyDatabaseHelper dbHelper;
     private SQLiteDatabase db;
     private LinearLayout mLayout;
+    private int now;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_dian, container, false);
+        Init();
+        return view;
+    }
+
     public void Init(){
 
-        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 1);
+        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 2);
         db = dbHelper.getWritableDatabase();
 
         std_names = new ArrayList<>();
@@ -92,7 +94,6 @@ public class DianFragment extends Fragment {
         });
     }
 
-    private int now;
     @Override
     public void onResume() {
         super.onResume();

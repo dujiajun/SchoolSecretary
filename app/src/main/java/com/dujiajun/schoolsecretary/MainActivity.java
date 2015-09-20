@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout tabLayout;
     private MyPagerAdapter pagerAdapter;
     private NavigationView navigationView;
+    private LocalReceiver localReceiver;
+    private LocalBroadcastManager localBroadcastManager;
+    private IntentFilter intentFilter;
+    private TextView text_username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +51,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         localBroadcastManager.registerReceiver(localReceiver, intentFilter);
 
     }
-    private LocalReceiver localReceiver;
-    private LocalBroadcastManager localBroadcastManager;
-    private IntentFilter intentFilter;
-    private TextView text_username;
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -80,14 +80,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return false;
     }
 
-    class LocalReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            text_username.setText(intent.getStringExtra("username"));
-
-        }
-    }
     protected void UIInit() {
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
@@ -108,7 +100,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragments.add(fragment2);
         fragments.add(fragment3);
         //String[] strings = {"首页", "抽签", "点名"};
-        String[] strings = { "抽签", "点名"};
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("抽签");
+        strings.add("点名");
         pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, strings);
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -145,5 +139,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    class LocalReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            text_username.setText(intent.getStringExtra("username"));
+
+        }
     }
 }

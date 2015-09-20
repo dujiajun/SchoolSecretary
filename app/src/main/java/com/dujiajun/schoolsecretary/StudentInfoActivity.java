@@ -40,15 +40,17 @@ public class StudentInfoActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private Boolean isEdit;
     private String originname;
+    private String classname;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
         UIInit();
-        dbHelper = new MyDatabaseHelper(this, "student.db", null, 1);
+        dbHelper = new MyDatabaseHelper(this, "student.db", null, 2);
         db = dbHelper.getWritableDatabase();
         Intent i = getIntent();
         isEdit = i.getBooleanExtra("isEdit", false);
+        classname = i.getStringExtra("classname");
         if (isEdit) {
             String name = i.getStringExtra("name");
             originname = name;
@@ -158,8 +160,12 @@ public class StudentInfoActivity extends AppCompatActivity {
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    String sql = "delete from students where name = '" + originname + "'";
-                                    db.execSQL(sql);
+                                    /*String sql = "delete from students where name = '"
+                                            + originname + "'"
+                                            + "and classname = '"
+                                            + classname +"';";
+                                    db.execSQL(sql);*/
+                                    db.delete("students", "name = ? and classname = ?", new String[]{originname, classname});
                                     finish();
                                 }
                             })
@@ -191,31 +197,52 @@ public class StudentInfoActivity extends AppCompatActivity {
 
                     if(isEdit){
                         if(!name.equals(originname)){
-                            String tmpsql = "select * from students where name = '"+name+"'";
-                            Cursor cursor = db.rawQuery(tmpsql,null);
+                            /*String tmpsql = "select * from students where name = '"
+                                    +name+"'"
+                                    +;
+                            Cursor cursor = db.rawQuery(tmpsql,null);*/
+                            Cursor cursor = db.query("students", null,
+                                    "name = ? and classname = ?", new String[]{name, classname}, null, null, null);
                             if(cursor.getCount()!=0){
                                 Toast.makeText(StudentInfoActivity.this, "已经存在学生"+name, Toast.LENGTH_SHORT).show();
                                 return false;
                             }
                         }
-                        String sql = "update Students set name='"
+                        /*String sql = "update Students set name='"
                                 + name + "',phone='"
                                 + phone + "',remark='"
                                 + remark + "' where name = '"
                                 + originname + "';";
-                        db.execSQL(sql);
+                        db.execSQL(sql);*/
+                        ContentValues values = new ContentValues();
+                        values.put("name", name);
+                        values.put("phone", phone);
+                        values.put("remark", remark);
+                        db.update("students", values, "name = ? and classname = ?", new String[]{originname, classname});
                     }else{
-                        String tmpsql = "select * from students where name = '"+name+"'";
+                        /*String tmpsql = "select * from students where name = '"+name+"'";
                         Cursor cursor = db.rawQuery(tmpsql,null);
                         if(cursor.getCount()!=0){
                             Toast.makeText(StudentInfoActivity.this, "已经存在学生"+name, Toast.LENGTH_SHORT).show();
                             return false;
+                        }*/
+                        Cursor cursor = db.query("students", null,
+                                "name = ? and classname = ?", new String[]{name, classname}, null, null, null);
+                        if (cursor.getCount() != 0) {
+                            Toast.makeText(StudentInfoActivity.this, "已经存在学生" + name, Toast.LENGTH_SHORT).show();
+                            return false;
                         }
-                        String sql = "insert into Students (name,phone,remark) values('"
+                        /*String sql = "insert into Students (name,phone,remark) values('"
                                 + name + "','"
                                 + phone + "','"
                                 + remark + "');";
-                        db.execSQL(sql);
+                        db.execSQL(sql);*/
+                        ContentValues values = new ContentValues();
+                        values.put("name", name);
+                        values.put("phone", phone);
+                        values.put("remark", remark);
+                        values.put("classname", classname);
+                        db.insert("students", null, values);
                     }
 
                     Toast.makeText(StudentInfoActivity.this, "保存成功", Toast.LENGTH_SHORT).show();

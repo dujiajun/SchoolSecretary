@@ -1,5 +1,7 @@
 package com.dujiajun.schoolsecretary;
 
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,6 +9,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,49 +30,21 @@ import java.util.ArrayList;
 
 public class ManageActivity extends AppCompatActivity {
 
-    private FloatingActionButton fabtn_add;
-    private ListView listView;
     private Toolbar toolbar;
-    private ArrayList<String> std_names;
-    //private String[] std_names = {"杜佳骏", "赵中彬", "莫湑", "吕晓钟", "李翰铭"};
-    private ArrayAdapter<String> arrayAdapter;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
+    private MyPagerAdapter pagerAdapter;
+    private ArrayList<Fragment> fragments;
+    private ArrayList<String> titles;
     private MyDatabaseHelper dbHelper;
     private SQLiteDatabase db;
-    private ArrayList<Student> stdlist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage);
         UIInit();
-        stdlist = new ArrayList<>();
-        dbHelper = new MyDatabaseHelper(this, "student.db", null, 1);
-        db = dbHelper.getWritableDatabase();
-        ListRefresh();
-    }
 
-    private void ListRefresh() {
-        std_names.clear();
-        stdlist.clear();
-        Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
-        //Log.d("TAG","after query");
-        if (cursor.moveToFirst()) {
-            do {
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                String phone = cursor.getString(cursor.getColumnIndex("phone"));
-                String remark = cursor.getString(cursor.getColumnIndex("remark"));
-                //Log.d("TAG",name+"|"+phone+"|"+remark);
-                stdlist.add(new Student(name, phone, remark));
-                std_names.add(name);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        arrayAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ListRefresh();
     }
 
     protected void UIInit() {
@@ -79,60 +57,77 @@ public class ManageActivity extends AppCompatActivity {
                 finish();
             }
         });
-        listView = (ListView) findViewById(R.id.mng_listview);
-        std_names = new ArrayList<>();
-        //std_names.add("杜佳骏");
-        arrayAdapter = new ArrayAdapter<>(ManageActivity.this, android.R.layout.simple_list_item_1, std_names);
-        listView.setAdapter(arrayAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ManageActivity.this, StudentInfoActivity.class);
-                intent.putExtra("isEdit", true);
-                intent.putExtra("name", stdlist.get(position).getName());
-                intent.putExtra("phone", stdlist.get(position).getPhone());
-                intent.putExtra("remark", stdlist.get(position).getRemark());
-                startActivity(intent);
-            }
-        });
-        /*listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //
-                String sql = "delete from students where name = '" + stdlist.get(position).getName() + "'";
-                db.execSQL(sql);
-                ListRefresh();
-                Toast.makeText(ManageActivity.this,"删除成功", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });*/
-        fabtn_add = (FloatingActionButton) findViewById(R.id.mng_add_btn);
-        fabtn_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(ManageActivity.this, "点击添加", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ManageActivity.this, StudentInfoActivity.class);
-                intent.putExtra("isEdit", false);
-                startActivity(intent);
-            }
-        });
+
+        viewPager = (ViewPager) findViewById(R.id.mng_viewpager);
+        tabLayout = (TabLayout) findViewById(R.id.mng_tablayout);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        fragments = new ArrayList<>();
+        titles = new ArrayList<>();
+        dbHelper = new MyDatabaseHelper(ManageActivity.this, "student.db", null, 2);
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select distinct classname from students;", null);
+        if (cursor.moveToFirst()) {
+            do {
+                String classname = cursor.getString(cursor.getColumnIndex("classname"));
+                ManageFragment fragment = new ManageFragment();
+                fragment.setClassname(classname);
+                titles.add(classname);
+                fragments.add(fragment);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, titles);
+        viewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_manage, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-
+        switch (id) {
+            case R.id.mng_add:
+                final EditText edit_class = new EditText(this);
+                new AlertDialog.Builder(this)
+                        .setTitle("输入班级名称：")
+                        .setView(edit_class)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String class_name = edit_class.getText().toString();
+                                if (class_name.equals("")) {
+                                    Toast.makeText(ManageActivity.this, "未填写班级名称", Toast.LENGTH_SHORT).show();
+                                    return;
+                                } else {
+                                    Cursor cursor = db.rawQuery("select distinct classname from students where classname = ?;"
+                                            , new String[]{class_name});
+                                    if (cursor.getCount() != 0) {
+                                        Toast.makeText(ManageActivity.this, "已存在班级 " + class_name, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    cursor.close();
+                                    ManageFragment fragment = new ManageFragment();
+                                    fragment.setClassname(class_name);
+                                    titles.add(class_name);
+                                    fragments.add(fragment);
+                                    pagerAdapter.notifyDataSetChanged();
+                                    tabLayout.setupWithViewPager(viewPager);
+                                    //viewPager.setCurrentItem(pagerAdapter.getItemPosition(fragment));
+                                    Toast.makeText(ManageActivity.this, "若未添加学生，不会保存本班级", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+        }
 
         return super.onOptionsItemSelected(item);
     }
