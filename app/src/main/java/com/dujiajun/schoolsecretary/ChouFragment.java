@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ChouFragment extends Fragment {
 
     private View view;
     private Button chou_btn;
     private TextView main_text;
-    private int tmp = 0;
     private ArrayList<String> std_names;
     private MyDatabaseHelper dbHelper;
     private SQLiteDatabase db;
@@ -33,6 +29,7 @@ public class ChouFragment extends Fragment {
     private ArrayList<String> classnames;
     private boolean bj = false;
     private ArrayAdapter<String> spinnerAdapter;
+    private int spinner_now = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chou, container, false);
@@ -44,7 +41,6 @@ public class ChouFragment extends Fragment {
     private void Init(){
         main_text = (TextView) view.findViewById(R.id.chou_name);
         chou_btn = (Button) view.findViewById(R.id.chou_btn);
-        tmp = 0;
         chou_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +53,7 @@ public class ChouFragment extends Fragment {
                     protected Void doInBackground(Void... params) {
                         for(int i = 0 ;i < 20 ;i++){
                             try {
-                                Thread.sleep(200);
+                                Thread.sleep(100);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -103,6 +99,7 @@ public class ChouFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinner_now = position;
                 String classname = parent.getItemAtPosition(position).toString();
                 Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
                 std_names.clear();
@@ -123,7 +120,7 @@ public class ChouFragment extends Fragment {
             }
         });
         if (bj) {
-            String classname = classnames.get(0);
+            String classname = classnames.get(spinner_now);
             //String classname = spinner.getSelectedItem().toString();
             Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
             if (cursor.moveToFirst()) {
@@ -155,7 +152,7 @@ public class ChouFragment extends Fragment {
         spinnerAdapter.notifyDataSetChanged();
         if (bj) {
             std_names.clear();
-            String classname = classnames.get(0);
+            String classname = classnames.get(spinner_now);
             Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
             if (cursor.moveToFirst()) {
                 do {

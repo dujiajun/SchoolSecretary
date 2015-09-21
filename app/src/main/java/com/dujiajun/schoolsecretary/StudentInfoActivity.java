@@ -146,9 +146,7 @@ public class StudentInfoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         switch (id) {
@@ -160,11 +158,6 @@ public class StudentInfoActivity extends AppCompatActivity {
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    /*String sql = "delete from students where name = '"
-                                            + originname + "'"
-                                            + "and classname = '"
-                                            + classname +"';";
-                                    db.execSQL(sql);*/
                                     db.delete("students", "name = ? and classname = ?", new String[]{originname, classname});
                                     finish();
                                 }
@@ -197,10 +190,6 @@ public class StudentInfoActivity extends AppCompatActivity {
 
                     if(isEdit){
                         if(!name.equals(originname)){
-                            /*String tmpsql = "select * from students where name = '"
-                                    +name+"'"
-                                    +;
-                            Cursor cursor = db.rawQuery(tmpsql,null);*/
                             Cursor cursor = db.query("students", null,
                                     "name = ? and classname = ?", new String[]{name, classname}, null, null, null);
                             if(cursor.getCount()!=0){
@@ -208,35 +197,20 @@ public class StudentInfoActivity extends AppCompatActivity {
                                 return false;
                             }
                         }
-                        /*String sql = "update Students set name='"
-                                + name + "',phone='"
-                                + phone + "',remark='"
-                                + remark + "' where name = '"
-                                + originname + "';";
-                        db.execSQL(sql);*/
                         ContentValues values = new ContentValues();
                         values.put("name", name);
                         values.put("phone", phone);
                         values.put("remark", remark);
                         db.update("students", values, "name = ? and classname = ?", new String[]{originname, classname});
                     }else{
-                        /*String tmpsql = "select * from students where name = '"+name+"'";
-                        Cursor cursor = db.rawQuery(tmpsql,null);
-                        if(cursor.getCount()!=0){
-                            Toast.makeText(StudentInfoActivity.this, "已经存在学生"+name, Toast.LENGTH_SHORT).show();
-                            return false;
-                        }*/
+
                         Cursor cursor = db.query("students", null,
                                 "name = ? and classname = ?", new String[]{name, classname}, null, null, null);
                         if (cursor.getCount() != 0) {
                             Toast.makeText(StudentInfoActivity.this, "已经存在学生" + name, Toast.LENGTH_SHORT).show();
                             return false;
                         }
-                        /*String sql = "insert into Students (name,phone,remark) values('"
-                                + name + "','"
-                                + phone + "','"
-                                + remark + "');";
-                        db.execSQL(sql);*/
+
                         ContentValues values = new ContentValues();
                         values.put("name", name);
                         values.put("phone", phone);

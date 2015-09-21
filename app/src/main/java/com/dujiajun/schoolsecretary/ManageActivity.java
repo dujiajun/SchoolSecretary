@@ -108,6 +108,7 @@ public class ManageActivity extends AppCompatActivity {
         switch (id) {
             case R.id.mng_add:
                 final EditText edit_class = new EditText(this);
+                edit_class.setMaxWidth(12);
                 new AlertDialog.Builder(this)
                         .setTitle("输入班级名称：")
                         .setView(edit_class)

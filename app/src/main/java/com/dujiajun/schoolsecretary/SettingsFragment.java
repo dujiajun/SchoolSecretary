@@ -27,8 +27,13 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         switch (preference.getKey()){
             case "username":
-                if(newValue.toString().equals("")){
+                String values = newValue.toString();
+                if (values.equals("")) {
                     Toast.makeText(getActivity(), "用户名不能为空", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                if (values.length() > 20) {
+                    Toast.makeText(getActivity(), "用户名过长，请修改", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 Intent intent = new Intent("com.dujiajun.dbstools.CHANGE_USERNAME_BROADCAST");

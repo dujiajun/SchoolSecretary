@@ -10,9 +10,10 @@
             android:key="showad" />
             -->
         <EditTextPreference
-            android:title="用户名"
-            android:summary="输入要显示的用户名"
             android:key="username"
+            android:summary="输入要显示的用户名"
+            android:title="用户名"
+
             />
     </PreferenceCategory>
     <!--

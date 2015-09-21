@@ -32,7 +32,7 @@ public class DianFragment extends Fragment {
     private ArrayList<String> classnames;
     private boolean bj = false;
     private ArrayAdapter<String> spinnerAdapter;
-
+    private int spinner_now = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_dian, container, false);
@@ -64,6 +64,7 @@ public class DianFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinner_now = position;
                 String classname = parent.getItemAtPosition(position).toString();
                 Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
                 std_names.clear();
@@ -84,7 +85,7 @@ public class DianFragment extends Fragment {
             }
         });
         if (bj) {
-            String classname = classnames.get(0);
+            String classname = classnames.get(spinner_now);
             //String classname = spinner.getSelectedItem().toString();
             Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
             if (cursor.moveToFirst()) {
@@ -158,7 +159,7 @@ public class DianFragment extends Fragment {
         spinnerAdapter.notifyDataSetChanged();
         if (bj) {
             std_names.clear();
-            String classname = classnames.get(0);
+            String classname = classnames.get(spinner_now);
             //String classname = spinner.getSelectedItem().toString();
             Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
             if (cursor.moveToFirst()) {
