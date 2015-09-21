@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.fragment;
 
 import android.app.Fragment;
 import android.database.Cursor;
@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dujiajun.schoolsecretary.MyDatabaseHelper;
+import com.dujiajun.schoolsecretary.R;
 
 import java.util.ArrayList;
 

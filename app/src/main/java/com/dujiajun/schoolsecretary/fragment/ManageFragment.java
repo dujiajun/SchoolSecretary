@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -6,13 +6,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.dujiajun.schoolsecretary.MyDatabaseHelper;
+import com.dujiajun.schoolsecretary.R;
+import com.dujiajun.schoolsecretary.Student;
+import com.dujiajun.schoolsecretary.activity.StudentInfoActivity;
 
 import java.util.ArrayList;
 

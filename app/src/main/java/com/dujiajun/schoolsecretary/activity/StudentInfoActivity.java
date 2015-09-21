@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.activity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -10,12 +10,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,10 +21,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.File;
+import com.dujiajun.schoolsecretary.MyDatabaseHelper;
+import com.dujiajun.schoolsecretary.R;
+
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class StudentInfoActivity extends AppCompatActivity {
     private static final int CROP_PHOTO = 2;

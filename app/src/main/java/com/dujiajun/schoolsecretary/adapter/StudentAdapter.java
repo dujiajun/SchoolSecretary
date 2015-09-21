@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.adapter;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;

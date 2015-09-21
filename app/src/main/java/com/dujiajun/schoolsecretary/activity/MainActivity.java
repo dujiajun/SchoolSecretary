@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.activity;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
@@ -20,7 +20,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.dujiajun.schoolsecretary.fragment.ChouFragment;
+import com.dujiajun.schoolsecretary.fragment.DianFragment;
+import com.dujiajun.schoolsecretary.adapter.MyPagerAdapter;
+import com.dujiajun.schoolsecretary.R;
 
 import java.util.ArrayList;
 

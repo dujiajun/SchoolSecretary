@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.activity;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.dujiajun.schoolsecretary.R;
+import com.dujiajun.schoolsecretary.fragment.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 
