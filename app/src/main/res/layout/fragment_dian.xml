@@ -32,18 +32,37 @@
                 android:id="@+id/dao_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="已到"
-                android:textSize="24sp"
-                android:layout_weight="1"/>
+                android:textSize="24sp" />
             <Button
                 android:id="@+id/weidao_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="未到"
-                android:textSize="24sp"
-                android:layout_weight="1"/>
+                android:textSize="24sp" />
         </LinearLayout>
     </FrameLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="选择班级："
+            android:textSize="20sp" />
+
+        <Spinner
+            android:id="@+id/dian_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </RelativeLayout>

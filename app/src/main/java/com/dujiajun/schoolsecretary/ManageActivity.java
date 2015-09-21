@@ -38,6 +38,7 @@ public class ManageActivity extends AppCompatActivity {
     private ArrayList<String> titles;
     private MyDatabaseHelper dbHelper;
     private SQLiteDatabase db;
+    private boolean bj = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +61,14 @@ public class ManageActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.mng_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.mng_tablayout);
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        //tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         fragments = new ArrayList<>();
         titles = new ArrayList<>();
         dbHelper = new MyDatabaseHelper(ManageActivity.this, "student.db", null, 2);
         db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select distinct classname from students;", null);
         if (cursor.moveToFirst()) {
+            bj = true;
             do {
                 String classname = cursor.getString(cursor.getColumnIndex("classname"));
                 ManageFragment fragment = new ManageFragment();
@@ -75,12 +77,22 @@ public class ManageActivity extends AppCompatActivity {
                 fragments.add(fragment);
             } while (cursor.moveToNext());
         }
-        cursor.close();
         pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, titles);
-        viewPager.setAdapter(pagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);
+        if (bj) {
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+            viewPager.setAdapter(pagerAdapter);
+            tabLayout.setupWithViewPager(viewPager);
+        } else {
+            Toast.makeText(ManageActivity.this, "点击右上角的加号添加班级", Toast.LENGTH_SHORT).show();
+            viewPager.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.GONE);
+        }
+        cursor.close();
 
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -119,7 +131,15 @@ public class ManageActivity extends AppCompatActivity {
                                     titles.add(class_name);
                                     fragments.add(fragment);
                                     pagerAdapter.notifyDataSetChanged();
-                                    tabLayout.setupWithViewPager(viewPager);
+                                    if (bj) {
+                                        tabLayout.setupWithViewPager(viewPager);
+                                    } else {
+                                        viewPager.setVisibility(View.VISIBLE);
+                                        tabLayout.setVisibility(View.VISIBLE);
+                                        viewPager.setAdapter(pagerAdapter);
+                                        tabLayout.setupWithViewPager(viewPager);
+                                    }
+
                                     //viewPager.setCurrentItem(pagerAdapter.getItemPosition(fragment));
                                     Toast.makeText(ManageActivity.this, "若未添加学生，不会保存本班级", Toast.LENGTH_SHORT).show();
                                 }

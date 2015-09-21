@@ -8,8 +8,11 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +28,15 @@ public class DianFragment extends Fragment {
     private SQLiteDatabase db;
     private LinearLayout mLayout;
     private int now;
+    private Spinner spinner;
+    private ArrayList<String> classnames;
+    private boolean bj = false;
+    private ArrayAdapter<String> spinnerAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_dian, container, false);
+        spinner = (Spinner) view.findViewById(R.id.dian_spinner);
         Init();
         return view;
     }
@@ -41,14 +49,53 @@ public class DianFragment extends Fragment {
         std_names = new ArrayList<>();
         weidao = new ArrayList<>();
 
-        Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        classnames = new ArrayList<>();
+        Cursor cursor1 = db.rawQuery("select distinct classname from students;", null);
+        if (cursor1.moveToFirst()) {
+            bj = true;
             do {
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                std_names.add(name);
-            } while (cursor.moveToNext());
+                String classname = cursor1.getString(cursor1.getColumnIndex("classname"));
+                classnames.add(classname);
+            } while (cursor1.moveToNext());
         }
-        cursor.close();
+        cursor1.close();
+        spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, classnames);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String classname = parent.getItemAtPosition(position).toString();
+                Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+                std_names.clear();
+                main_text.setText("开始");
+                if (cursor.moveToFirst()) {
+                    do {
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        //Log.d("TAG",classname+" "+name);
+                        std_names.add(name);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        if (bj) {
+            String classname = classnames.get(0);
+            //String classname = spinner.getSelectedItem().toString();
+            Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    //Log.d("TAG",classname+" "+name);
+                    std_names.add(name);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
 
         dian_btn = (Button) view.findViewById(R.id.dian_btn);
         dao_btn = (Button) view.findViewById(R.id.dao_btn);
@@ -97,15 +144,31 @@ public class DianFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        std_names.clear();
-        Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        bj = false;
+        classnames.clear();
+        Cursor cursor1 = db.rawQuery("select distinct classname from students;", null);
+        if (cursor1.moveToFirst()) {
+            bj = true;
             do {
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                std_names.add(name);
-            } while (cursor.moveToNext());
+                String classname = cursor1.getString(cursor1.getColumnIndex("classname"));
+                classnames.add(classname);
+            } while (cursor1.moveToNext());
         }
-        cursor.close();
+        cursor1.close();
+        spinnerAdapter.notifyDataSetChanged();
+        if (bj) {
+            std_names.clear();
+            String classname = classnames.get(0);
+            //String classname = spinner.getSelectedItem().toString();
+            Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    std_names.add(name);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
     }
 
     @Override
@@ -116,6 +179,7 @@ public class DianFragment extends Fragment {
     }
 
     public void DianOver(){
+        main_text.setText("点名完成");
         if (weidao.size()==0){
             Toast.makeText(getActivity(), "所有学生已到齐", Toast.LENGTH_SHORT).show();
         }else{

@@ -6,10 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +29,14 @@ public class ChouFragment extends Fragment {
     private ArrayList<String> std_names;
     private MyDatabaseHelper dbHelper;
     private SQLiteDatabase db;
-
+    private Spinner spinner;
+    private ArrayList<String> classnames;
+    private boolean bj = false;
+    private ArrayAdapter<String> spinnerAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chou, container, false);
+        spinner = (Spinner) view.findViewById(R.id.chou_spinner);
         Init();
         return view;
     }
@@ -69,6 +77,7 @@ public class ChouFragment extends Fragment {
                     @Override
                     protected void onPostExecute(Void aVoid) {
                         super.onPostExecute(aVoid);
+                        Toast.makeText(getActivity(), "抽签结束，抽到结果是 " + main_text.getText().toString(), Toast.LENGTH_SHORT).show();
                     }
                 }.execute();
             }
@@ -79,28 +88,84 @@ public class ChouFragment extends Fragment {
 
         std_names = new ArrayList<>();
 
-        Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        classnames = new ArrayList<>();
+        Cursor cursor1 = db.rawQuery("select distinct classname from students;", null);
+        if (cursor1.moveToFirst()) {
+            bj = true;
             do {
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                std_names.add(name);
-            } while (cursor.moveToNext());
+                String classname = cursor1.getString(cursor1.getColumnIndex("classname"));
+                classnames.add(classname);
+            } while (cursor1.moveToNext());
         }
-        cursor.close();
+        cursor1.close();
+        spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, classnames);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String classname = parent.getItemAtPosition(position).toString();
+                Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+                std_names.clear();
+                main_text.setText("开始");
+                if (cursor.moveToFirst()) {
+                    do {
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        //Log.d("TAG",classname+" "+name);
+                        std_names.add(name);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        if (bj) {
+            String classname = classnames.get(0);
+            //String classname = spinner.getSelectedItem().toString();
+            Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    //Log.d("TAG",classname+" "+name);
+                    std_names.add(name);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        //spinner.setSelection(0);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        std_names.clear();
-        Cursor cursor = db.query("Students", null, null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        bj = false;
+        classnames.clear();
+        Cursor cursor1 = db.rawQuery("select distinct classname from students;", null);
+        if (cursor1.moveToFirst()) {
+            bj = true;
             do {
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                std_names.add(name);
-            } while (cursor.moveToNext());
+                String classname = cursor1.getString(cursor1.getColumnIndex("classname"));
+                classnames.add(classname);
+            } while (cursor1.moveToNext());
         }
-        cursor.close();
+        cursor1.close();
+        spinnerAdapter.notifyDataSetChanged();
+        if (bj) {
+            std_names.clear();
+            String classname = classnames.get(0);
+            Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    std_names.add(name);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
     }
 
 }

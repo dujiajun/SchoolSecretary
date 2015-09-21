@@ -35,7 +35,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         return ((Fragment) object).getView() == view;
     }
 
-    @Override
+    /*@Override
     public void notifyDataSetChanged() {
         mCount = getCount();
         super.notifyDataSetChanged();
@@ -44,7 +44,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getItemPosition(Object object) {
         return POSITION_NONE;
-    }
+    }*/
 
     @Override
     public int getCount() {
