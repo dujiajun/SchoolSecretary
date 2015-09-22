@@ -14,9 +14,15 @@
         android:icon="@mipmap/ic_search_white_36dp"
         app:showAsAction="ifRoom" />-->
     <item
+        android:id="@+id/mng_edit"
+        android:icon="@mipmap/ic_mode_edit_white_24dp"
+        android:orderInCategory="80"
+        android:title="修改班级"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/mng_add"
         android:icon="@mipmap/ic_add_white_24dp"
-        android:orderInCategory="80"
+        android:orderInCategory="90"
         android:title="添加班级"
         app:showAsAction="ifRoom" />
 </menu>

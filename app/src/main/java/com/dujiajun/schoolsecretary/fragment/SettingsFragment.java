@@ -34,7 +34,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                     Toast.makeText(getActivity(), "用户名不能为空", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                if (values.length() > 20) {
+                if (values.length() > 15) {
                     Toast.makeText(getActivity(), "用户名过长，请修改", Toast.LENGTH_SHORT).show();
                     return false;
                 }

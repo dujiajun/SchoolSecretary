@@ -79,6 +79,9 @@ public class ManageActivity extends AppCompatActivity {
             viewPager.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
             viewPager.setAdapter(pagerAdapter);
+            if (fragments.size() >= 3) {
+                tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            }
             tabLayout.setupWithViewPager(viewPager);
         } else {
             Toast.makeText(ManageActivity.this, "点击右上角的加号添加班级", Toast.LENGTH_SHORT).show();
@@ -129,6 +132,9 @@ public class ManageActivity extends AppCompatActivity {
                                     titles.add(class_name);
                                     fragments.add(fragment);
                                     pagerAdapter.notifyDataSetChanged();
+                                    if (fragments.size() >= 3) {
+                                        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                                    }
                                     if (bj) {
                                         tabLayout.setupWithViewPager(viewPager);
                                     } else {
@@ -145,6 +151,45 @@ public class ManageActivity extends AppCompatActivity {
                         })
                         .setNegativeButton("取消", null)
                         .show();
+                break;
+            case R.id.mng_edit:
+                /*if(fragments.size()==0){
+                    Toast.makeText(ManageActivity.this, "请先添加班级", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                final EditText edit_class2 = new EditText(this);
+                edit_class2.setMaxWidth(12);
+                new AlertDialog.Builder(this)
+                        .setTitle("输入班级名称：")
+                        .setView(edit_class2)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String class_name = edit_class2.getText().toString();
+                                if (class_name.equals("")) {
+                                    Toast.makeText(ManageActivity.this, "未填写班级名称", Toast.LENGTH_SHORT).show();
+                                    return ;
+                                } else {
+                                    Cursor cursor = db.rawQuery("select distinct classname from students where classname = ?;"
+                                            , new String[]{class_name});
+                                    if (cursor.getCount() != 0) {
+                                        Toast.makeText(ManageActivity.this, "已存在班级 " + class_name, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    cursor.close();
+                                    db.execSQL("update students set classname = ?", new String[]{class_name});
+                                    int id = tabLayout.getSelectedTabPosition();
+                                    ManageFragment now = (ManageFragment) fragments.get(id);
+                                    now.setClassname(class_name);
+                                    pagerAdapter.notifyDataSetChanged();
+                                    tabLayout.setupWithViewPager(viewPager);
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();*/
+                Toast.makeText(ManageActivity.this, "功能开发中，敬请期待", Toast.LENGTH_SHORT).show();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
