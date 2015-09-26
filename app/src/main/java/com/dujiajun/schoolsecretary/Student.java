@@ -1,26 +1,37 @@
 package com.dujiajun.schoolsecretary;
 
-/**
- * Created by 杜佳骏 on 2015/9/13 0013.
- */
 public class Student {
     private String name;
     private String phone;
     private String remark;
     private String classname;
+    private int id;
+    private String idname;
 
-    public Student(String name, String phone, String remark, String classname) {
+    public Student(int id, String name, String phone, String remark, String classname) {
         this.name = name;
         this.phone = phone;
         this.remark = remark;
         this.classname = classname;
+        this.id = id;
+        idname = String.valueOf(id);
     }
 
-    public Student(String name, String classname) {
+    public Student(int id, String name, String classname) {
         this.name = name;
         this.phone = "";
         this.remark = "";
         this.classname = classname;
+        this.id = id;
+        idname = String.valueOf(id);
+    }
+
+    public String getIdname() {
+        return idname;
+    }
+
+    public void setIdname(String idname) {
+        this.idname = idname;
     }
 
     public String getClassname() {

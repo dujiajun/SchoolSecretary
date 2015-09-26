@@ -12,7 +12,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:navigationIcon="@mipmap/ic_arrow_back_white_24dp"
-        app:title="学生管理" />
+        app:title="班级管理" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/mng_tablayout"

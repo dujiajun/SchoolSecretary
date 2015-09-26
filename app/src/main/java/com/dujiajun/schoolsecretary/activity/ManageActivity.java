@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -63,32 +64,43 @@ public class ManageActivity extends AppCompatActivity {
         titles = new ArrayList<>();
         dbHelper = new MyDatabaseHelper(ManageActivity.this, "student.db", null, 2);
         db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select distinct classname from students;", null);
-        if (cursor.moveToFirst()) {
-            bj = true;
-            do {
-                String classname = cursor.getString(cursor.getColumnIndex("classname"));
-                ManageFragment fragment = new ManageFragment();
-                fragment.setClassname(classname);
-                titles.add(classname);
-                fragments.add(fragment);
-            } while (cursor.moveToNext());
-        }
-        pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, titles);
-        if (bj) {
-            viewPager.setVisibility(View.VISIBLE);
-            tabLayout.setVisibility(View.VISIBLE);
-            viewPager.setAdapter(pagerAdapter);
-            if (fragments.size() >= 3) {
-                tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Cursor cursor = db.rawQuery("select distinct classname from students;", null);
+                if (cursor.moveToFirst()) {
+                    bj = true;
+                    do {
+                        String classname = cursor.getString(cursor.getColumnIndex("classname"));
+                        ManageFragment fragment = new ManageFragment();
+                        fragment.setClassname(classname);
+                        titles.add(classname);
+                        fragments.add(fragment);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                return null;
             }
-            tabLayout.setupWithViewPager(viewPager);
-        } else {
-            Toast.makeText(ManageActivity.this, "点击右上角的加号添加班级", Toast.LENGTH_SHORT).show();
-            viewPager.setVisibility(View.GONE);
-            tabLayout.setVisibility(View.GONE);
-        }
-        cursor.close();
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                pagerAdapter = new MyPagerAdapter(getFragmentManager(), fragments, titles);
+                if (bj) {
+                    viewPager.setVisibility(View.VISIBLE);
+                    tabLayout.setVisibility(View.VISIBLE);
+                    viewPager.setAdapter(pagerAdapter);
+                    if (fragments.size() >= 3) {
+                        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                    }
+                    tabLayout.setupWithViewPager(viewPager);
+                } else {
+                    Toast.makeText(ManageActivity.this, "点击右上角的加号添加班级", Toast.LENGTH_SHORT).show();
+                    viewPager.setVisibility(View.GONE);
+                    tabLayout.setVisibility(View.GONE);
+                }
+            }
+        }.execute();
 
     }
 

@@ -1,5 +1,6 @@
 package com.dujiajun.schoolsecretary.activity;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,9 +11,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +27,14 @@ import android.widget.Toast;
 import com.dujiajun.schoolsecretary.MyDatabaseHelper;
 import com.dujiajun.schoolsecretary.R;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class StudentInfoActivity extends AppCompatActivity {
     private static final int CROP_PHOTO = 2;
@@ -38,6 +48,8 @@ public class StudentInfoActivity extends AppCompatActivity {
     private Boolean isEdit;
     private String originname;
     private String classname;
+    private String idname;
+    private String filename;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +60,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         Intent i = getIntent();
         isEdit = i.getBooleanExtra("isEdit", false);
         classname = i.getStringExtra("classname");
+        idname = i.getStringExtra("id");
         if (isEdit) {
             String name = i.getStringExtra("name");
             originname = name;
@@ -66,7 +79,13 @@ public class StudentInfoActivity extends AppCompatActivity {
         else{
             toolbar.setTitle("添加学生");
         }
-
+        filename = Environment.getExternalStorageDirectory() + "/schoolsecretary/std_img/" + idname;
+        //filename = "std_img/"+idname;
+        File file = new File(filename);
+        if (file.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(filename);
+            imgview1.setImageBitmap(bitmap);
+        }
     }
 
     protected void UIInit() {
@@ -96,7 +115,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         img_btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(StudentInfoActivity.this, "该功能尚在开发中，敬请期待", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(StudentInfoActivity.this, "该功能尚在开发中，敬请期待", Toast.LENGTH_SHORT).show();
                 /*File file1 = new File(Environment.getExternalStorageDirectory(), "img.jpg");
                 try {
                     if (file1.exists()) {
@@ -106,13 +125,13 @@ public class StudentInfoActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                imguri = Uri.fromFile(file1);
+                imguri = Uri.fromFile(file1);*/
                 Intent intent = new Intent("android.intent.action.GET_CONTENT");
                 intent.setType("image/*");
-                intent.putExtra("crop", true);
+                /*intent.putExtra("crop", true);
                 intent.putExtra("scale", true);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imguri);
-                startActivityForResult(intent, CROP_PHOTO);*/
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imguri);*/
+                startActivityForResult(intent, CROP_PHOTO);
             }
         });
         imgview1 = (ImageView) findViewById(R.id.std_pic);
@@ -124,9 +143,24 @@ public class StudentInfoActivity extends AppCompatActivity {
             case CROP_PHOTO:
                 if (resultCode == RESULT_OK) {
                     try {
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imguri));
+                        Uri uri = data.getData();
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
                         imgview1.setImageBitmap(bitmap);
+                        File file = new File(filename);
+                        //Log.d("TAG",filename);
+                        if (file.exists()) file.delete();
+                        else file.getParentFile().mkdirs();
+                        file.createNewFile();//Log.d("TAG","ERROR");
+                        FileOutputStream out = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        out.flush();
+                        out.close();
+                        //Log.d("TAG",String.valueOf(file.exists()));
                     } catch (FileNotFoundException e) {
+                        //Log.d("TAG",e.getMessage());
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        //Log.d("TAG",e.getMessage());
                         e.printStackTrace();
                     }
                 }

@@ -48,6 +48,7 @@ public class ManageFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), StudentInfoActivity.class);
                 intent.putExtra("isEdit", true);
+                intent.putExtra("id", stdlist.get(position).getIdname());
                 intent.putExtra("name", stdlist.get(position).getName());
                 intent.putExtra("phone", stdlist.get(position).getPhone());
                 intent.putExtra("remark", stdlist.get(position).getRemark());
@@ -88,11 +89,12 @@ public class ManageFragment extends Fragment {
         //if (cursor.isNull(cursor.getColumnIndex("name")))return;
         if (cursor.moveToFirst()) {
             do {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 String phone = cursor.getString(cursor.getColumnIndex("phone"));
                 String remark = cursor.getString(cursor.getColumnIndex("remark"));
                 //Log.d("TAG",name+"|"+phone+"|"+remark);
-                stdlist.add(new Student(name, phone, remark, classname));
+                stdlist.add(new Student(id, name, phone, remark, classname));
                 std_names.add(name);
             } while (cursor.moveToNext());
         }
