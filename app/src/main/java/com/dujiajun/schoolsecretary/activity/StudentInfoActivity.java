@@ -115,7 +115,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         img_btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(StudentInfoActivity.this, "该功能尚在开发中，敬请期待", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudentInfoActivity.this, "该功能属实验性功能，为防止意外，请选择1M以内的图片", Toast.LENGTH_SHORT).show();
                 /*File file1 = new File(Environment.getExternalStorageDirectory(), "img.jpg");
                 try {
                     if (file1.exists()) {

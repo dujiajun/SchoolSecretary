@@ -2,6 +2,7 @@ package com.dujiajun.schoolsecretary.activity;
 
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -118,7 +119,7 @@ public class ManageActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.mng_add:
+            case R.id.mng_add: {
                 final EditText edit_class = new EditText(this);
                 edit_class.setMaxWidth(12);
                 new AlertDialog.Builder(this)
@@ -156,21 +157,24 @@ public class ManageActivity extends AppCompatActivity {
                                         tabLayout.setupWithViewPager(viewPager);
                                     }
 
-                                    //viewPager.setCurrentItem(pagerAdapter.getItemPosition(fragment));
+                                    viewPager.setCurrentItem(pagerAdapter.getCount() - 1);
                                     Toast.makeText(ManageActivity.this, "若未添加学生，不会保存本班级", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         })
                         .setNegativeButton("取消", null)
                         .show();
+            }
                 break;
-            case R.id.mng_edit:
-                /*if(fragments.size()==0){
+            case R.id.mng_edit: {
+                if (fragments.size() == 0) {
                     Toast.makeText(ManageActivity.this, "请先添加班级", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 final EditText edit_class2 = new EditText(this);
+                final String origin_classname = titles.get(viewPager.getCurrentItem());
                 edit_class2.setMaxWidth(12);
+                edit_class2.setText(origin_classname);
                 new AlertDialog.Builder(this)
                         .setTitle("输入班级名称：")
                         .setView(edit_class2)
@@ -180,7 +184,9 @@ public class ManageActivity extends AppCompatActivity {
                                 String class_name = edit_class2.getText().toString();
                                 if (class_name.equals("")) {
                                     Toast.makeText(ManageActivity.this, "未填写班级名称", Toast.LENGTH_SHORT).show();
-                                    return ;
+                                    return;
+                                } else if (class_name.equals(origin_classname)) {
+                                    return;
                                 } else {
                                     Cursor cursor = db.rawQuery("select distinct classname from students where classname = ?;"
                                             , new String[]{class_name});
@@ -189,19 +195,37 @@ public class ManageActivity extends AppCompatActivity {
                                         return;
                                     }
                                     cursor.close();
-                                    db.execSQL("update students set classname = ?", new String[]{class_name});
-                                    int id = tabLayout.getSelectedTabPosition();
-                                    ManageFragment now = (ManageFragment) fragments.get(id);
-                                    now.setClassname(class_name);
-                                    pagerAdapter.notifyDataSetChanged();
-                                    tabLayout.setupWithViewPager(viewPager);
+                                    db.execSQL("update students set classname = ? where classname = ?", new String[]{class_name, origin_classname});
+                                    finish();
+                                    startActivity(new Intent(ManageActivity.this, ManageActivity.class));
                                 }
                             }
                         })
                         .setNegativeButton("取消", null)
-                        .show();*/
-                Toast.makeText(ManageActivity.this, "功能开发中，敬请期待", Toast.LENGTH_SHORT).show();
+                        .show();
+            }
                 break;
+            case R.id.mng_del: {
+                if (fragments.size() == 0) {
+                    Toast.makeText(ManageActivity.this, "请先添加班级", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                final String origin_classname = titles.get(viewPager.getCurrentItem());
+                new AlertDialog.Builder(ManageActivity.this)
+                        .setTitle("确定删除")
+                        .setMessage("删除后将不能恢复，确定删除？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                db.delete("students", "classname = ?", new String[]{origin_classname});
+                                finish();
+                                startActivity(new Intent(ManageActivity.this, ManageActivity.class));
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+            }
+            break;
         }
 
         return super.onOptionsItemSelected(item);

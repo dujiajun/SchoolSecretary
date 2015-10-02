@@ -16,6 +16,14 @@
 
             />
     </PreferenceCategory>
+    <PreferenceCategory android:title="其他">
+        <Preference android:title="关于">
+            <intent
+                android:action="ANDROID.INTENT.ACTION.MAIN"
+                android:targetClass="com.dujiajun.schoolsecretary.activity.AboutActivity"
+                android:targetPackage="com.dujiajun.schoolsecretary"></intent>
+        </Preference>
+    </PreferenceCategory>
     <!--
     <PreferenceCategory android:title="抽签">
         <SwitchPreference

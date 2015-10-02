@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!--<item
-        android:id="@+id/mng_refresh"
-        android:orderInCategory="90"
-        android:title="刷新"
-        android:icon="@mipmap/ic_refresh_white_36dp"
-        app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/mng_search"
+        android:id="@+id/mng_del"
+        android:icon="@mipmap/ic_clear_white_36dp"
         android:orderInCategory="80"
-        android:title="搜索"
-        android:icon="@mipmap/ic_search_white_36dp"
-        app:showAsAction="ifRoom" />-->
+        android:title="删除班级"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/mng_edit"
         android:icon="@mipmap/ic_mode_edit_white_24dp"

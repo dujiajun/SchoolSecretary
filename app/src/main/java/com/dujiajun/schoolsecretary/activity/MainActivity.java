@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intentFilter.addAction("com.dujiajun.dbstools.CHANGE_USERNAME_BROADCAST");
         localReceiver = new LocalReceiver();
         localBroadcastManager.registerReceiver(localReceiver, intentFilter);
-
     }
 
     @Override
@@ -74,11 +73,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intent);
                     break;
                 }
-                case R.id.menu_drawer4: {
+                /*case R.id.menu_drawer4: {
                     Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                     startActivity(intent);
                     break;
-                }
+                }*/
 
             }
             drawerLayout.closeDrawers();

@@ -18,7 +18,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.layout.preferences);
+        addPreferencesFromResource(R.xml.preferences);
         edit_username = (EditTextPreference) findPreference("username");
         edit_username.setOnPreferenceChangeListener(this);
 
