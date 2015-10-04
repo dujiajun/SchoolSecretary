@@ -39,6 +39,7 @@
             android:name=".activity.AboutActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.ChartActivity" />
+        <activity android:name=".activity.ExamActivity"></activity>
     </application>
 
 </manifest>

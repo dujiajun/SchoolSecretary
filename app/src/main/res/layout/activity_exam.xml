@@ -6,17 +6,26 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/chart_toolbar"
+        android:id="@+id/exam_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:navigationIcon="@mipmap/ic_arrow_back_white"
-        app:title="分析"></android.support.v7.widget.Toolbar>
+        app:title="成绩管理"></android.support.v7.widget.Toolbar>
 
-    <lecho.lib.hellocharts.view.LineChartView
-        android:id="@+id/chart"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp" />
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/exam_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="20dp"
+            android:text="TEST" />
+    </ScrollView>
+
 </LinearLayout>

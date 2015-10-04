@@ -158,7 +158,7 @@ public class ManageActivity extends AppCompatActivity {
                                     }
 
                                     viewPager.setCurrentItem(pagerAdapter.getCount() - 1);
-                                    Toast.makeText(ManageActivity.this, "若未添加学生，不会保存本班级", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ManageActivity.this, "若未添加学生，则不会保存本班级", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         })

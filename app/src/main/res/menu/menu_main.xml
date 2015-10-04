@@ -4,8 +4,8 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_share"
+        android:icon="@mipmap/ic_share_white"
         android:orderInCategory="100"
-        android:icon="@mipmap/ic_share_white_36dp"
         android:title="分享"
         app:showAsAction="ifRoom" />
 </menu>

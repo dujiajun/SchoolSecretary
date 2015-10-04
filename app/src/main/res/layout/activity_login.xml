@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        app:navigationIcon="@mipmap/ic_arrow_back_white_24dp"
+        app:navigationIcon="@mipmap/ic_arrow_back_white"
         app:title="登录"
         >
     </android.support.v7.widget.Toolbar>
@@ -72,8 +72,8 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:layout_toStartOf="@id/flag_text"
         android:layout_toLeftOf="@id/flag_text"
+        android:layout_toStartOf="@id/flag_text"
         android:text="新用户注册" />
 
     <TextView
@@ -81,8 +81,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_table"
-        android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@id/flag_text"
         android:layout_toRightOf="@id/flag_text"

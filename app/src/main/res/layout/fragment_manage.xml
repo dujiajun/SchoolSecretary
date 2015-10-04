@@ -14,5 +14,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_margin="20dp"
-        android:src="@mipmap/ic_person_add_black_36dp" />
+        android:src="@mipmap/ic_person_add_black" />
 </FrameLayout>

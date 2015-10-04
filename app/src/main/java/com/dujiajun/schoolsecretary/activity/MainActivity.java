@@ -73,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intent);
                     break;
                 }
+                case R.id.menu_drawer5: {
+                    Intent intent = new Intent(MainActivity.this, ExamActivity.class);
+                    startActivity(intent);
+                    break;
+                }
                 /*case R.id.menu_drawer4: {
                     Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                     startActivity(intent);

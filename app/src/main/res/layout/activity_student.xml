@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        app:navigationIcon="@mipmap/ic_arrow_back_white_24dp"
+        app:navigationIcon="@mipmap/ic_arrow_back_white"
         app:title="学生详细信息" />
 
     <RelativeLayout
@@ -36,7 +36,7 @@
             android:layout_alignParentRight="true"
             android:layout_margin="5dp"
             android:background="#00000000"
-            android:src="@mipmap/ic_pageview_white_36dp" />
+            android:src="@mipmap/ic_pageview_white" />
     </RelativeLayout>
 
     <LinearLayout
