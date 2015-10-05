@@ -17,6 +17,14 @@
     <ListView
         android:id="@+id/exam_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="wrap_content"></ListView>
 
+    <TextView
+        android:id="@+id/exam_ins_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/xls_instruction"
+        android:textSize="18sp"
+        android:visibility="gone" />
 </LinearLayout>

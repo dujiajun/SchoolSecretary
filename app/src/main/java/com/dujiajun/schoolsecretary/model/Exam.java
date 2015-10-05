@@ -1,4 +1,4 @@
-package com.dujiajun.schoolsecretary;
+package com.dujiajun.schoolsecretary.model;
 
 public class Exam {
     private String examName;
@@ -8,6 +8,13 @@ public class Exam {
 
     public Exam(String examName, String studentName) {
         this.examName = examName;
+        this.studentName = studentName;
+    }
+
+    public Exam(String examName, String studentName, int rank, int score) {
+        this.examName = examName;
+        this.rank = rank;
+        this.score = score;
         this.studentName = studentName;
     }
 

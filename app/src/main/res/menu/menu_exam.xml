@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/exam_insert"
+        android:icon="@mipmap/ic_add_white"
+        android:orderInCategory="90"
+        android:title="添加"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/exam_insert_xls"
         android:icon="@mipmap/ic_insert_drive_file_white"
         android:orderInCategory="100"
-        android:title="导入XLS"
-        app:showAsAction="ifRoom" />
+        android:title="从XLS文件导入"
+        app:showAsAction="never" />
 </menu>

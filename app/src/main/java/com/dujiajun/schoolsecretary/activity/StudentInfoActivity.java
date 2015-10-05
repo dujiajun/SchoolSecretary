@@ -73,7 +73,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         else{
             toolbar.setTitle("添加学生");
         }
-        filename = Environment.getExternalStorageDirectory() + "/dbs/schoolsecretary/std_img/" + idname;
+        filename = Environment.getExternalStorageDirectory() + "/dbs/ss/std_img/" + idname;
         //filename = "std_img/"+idname;
         File file = new File(filename);
         if (file.exists()) {

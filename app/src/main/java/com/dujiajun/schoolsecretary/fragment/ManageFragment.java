@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 import com.dujiajun.schoolsecretary.MyDatabaseHelper;
 import com.dujiajun.schoolsecretary.R;
-import com.dujiajun.schoolsecretary.Student;
+import com.dujiajun.schoolsecretary.model.Student;
 import com.dujiajun.schoolsecretary.activity.StudentInfoActivity;
 
 import java.util.ArrayList;

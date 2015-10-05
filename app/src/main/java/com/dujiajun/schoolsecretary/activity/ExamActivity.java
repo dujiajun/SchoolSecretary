@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ public class ExamActivity extends AppCompatActivity {
     private MyDatabaseHelper dbHelper;
     private SQLiteDatabase db;
     private boolean bj = false;
+    private TextView ins_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +68,18 @@ public class ExamActivity extends AppCompatActivity {
         exams.clear();
         Cursor cursor = db.rawQuery("select distinct examname from exams;", null);
         if (cursor.moveToFirst()) {
+            ins_text.setVisibility(View.GONE);
+            exam_list.setVisibility(View.VISIBLE);
             bj = true;
             do {
                 String examname = cursor.getString(cursor.getColumnIndex("examname"));
                 //Toast.makeText(ExamActivity.this,examname, Toast.LENGTH_SHORT).show();
                 exams.add(examname);
             } while (cursor.moveToNext());
+        } else {
+            bj = false;
+            ins_text.setVisibility(View.VISIBLE);
+            exam_list.setVisibility(View.GONE);
         }
         cursor.close();
         exam_adapter.notifyDataSetChanged();
@@ -94,6 +102,16 @@ public class ExamActivity extends AppCompatActivity {
         exams = new ArrayList<>();
         exam_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, exams);
         exam_list.setAdapter(exam_adapter);
+        ins_text = (TextView) findViewById(R.id.exam_ins_text);
+        exam_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ExamActivity.this, ExamInfoActivity.class);
+                intent.putExtra("isEdit", true);
+                intent.putExtra("examname", exams.get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -117,10 +135,10 @@ public class ExamActivity extends AppCompatActivity {
                         }
                     }
                 };
-                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dbs/schoolsecretary/xls/");
+                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dbs/ss/xls/");
                 final File[] files = file.listFiles(filter);
                 if (files == null) {
-                    Toast.makeText(ExamActivity.this, "请先将xls文件放在/sdcard/dbs/schoolsecretary/xls/目录下", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ExamActivity.this, "请先将xls文件放在/sdcard/dbs/ss/xls/目录下", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 ArrayList<String> filenames = new ArrayList<>();
@@ -129,7 +147,7 @@ public class ExamActivity extends AppCompatActivity {
                 }
                 final String[] strings = new String[filenames.size()];
                 filenames.toArray(strings);
-                new AlertDialog.Builder(this).setTitle("选择XLS文件（存放地址/sdcard/dbs/schoolsecretary/xls/）")
+                new AlertDialog.Builder(this).setTitle("选择XLS文件（存放地址/sdcard/dbs/ss/xls/）")
                         .setItems(strings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -139,6 +157,12 @@ public class ExamActivity extends AppCompatActivity {
                             }
                         }).setNegativeButton("取消", null)
                         .show();
+            }
+            break;
+            case R.id.exam_insert: {
+                Intent intent = new Intent(ExamActivity.this, ExamInfoActivity.class);
+                intent.putExtra("isEdit", false);
+                startActivity(intent);
             }
             break;
         }
