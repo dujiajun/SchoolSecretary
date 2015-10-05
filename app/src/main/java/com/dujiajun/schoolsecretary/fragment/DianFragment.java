@@ -46,7 +46,7 @@ public class DianFragment extends Fragment {
 
     public void Init(){
 
-        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 2);
+        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 3);
         db = dbHelper.getWritableDatabase();
 
         std_names = new ArrayList<>();

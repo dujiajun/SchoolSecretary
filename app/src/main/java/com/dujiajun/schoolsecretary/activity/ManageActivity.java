@@ -63,7 +63,7 @@ public class ManageActivity extends AppCompatActivity {
         //tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         fragments = new ArrayList<>();
         titles = new ArrayList<>();
-        dbHelper = new MyDatabaseHelper(ManageActivity.this, "student.db", null, 2);
+        dbHelper = new MyDatabaseHelper(ManageActivity.this, "student.db", null, 3);
         db = dbHelper.getWritableDatabase();
         new AsyncTask<Void, Void, Void>() {
             @Override

@@ -1,6 +1,5 @@
 package com.dujiajun.schoolsecretary.activity;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,14 +25,10 @@ import android.widget.Toast;
 import com.dujiajun.schoolsecretary.MyDatabaseHelper;
 import com.dujiajun.schoolsecretary.R;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class StudentInfoActivity extends AppCompatActivity {
     private static final int CROP_PHOTO = 2;
@@ -55,7 +49,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
         UIInit();
-        dbHelper = new MyDatabaseHelper(this, "student.db", null, 2);
+        dbHelper = new MyDatabaseHelper(this, "student.db", null, 3);
         db = dbHelper.getWritableDatabase();
         Intent i = getIntent();
         isEdit = i.getBooleanExtra("isEdit", false);
@@ -79,7 +73,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         else{
             toolbar.setTitle("添加学生");
         }
-        filename = Environment.getExternalStorageDirectory() + "/schoolsecretary/std_img/" + idname;
+        filename = Environment.getExternalStorageDirectory() + "/dbs/schoolsecretary/std_img/" + idname;
         //filename = "std_img/"+idname;
         File file = new File(filename);
         if (file.exists()) {

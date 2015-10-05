@@ -67,7 +67,7 @@ public class ManageFragment extends Fragment {
             }
         });
         stdlist = new ArrayList<>();
-        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 2);
+        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 3);
         db = dbHelper.getWritableDatabase();
         ListRefresh();
         return view;

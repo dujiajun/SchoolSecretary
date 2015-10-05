@@ -1,10 +1,8 @@
 package com.dujiajun.schoolsecretary;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
 
@@ -14,6 +12,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             + "classname text,"
             + "phone text,"
             + "remark text);";
+
+    public static final String CREATE_EXAM = "create table exams ("
+            + "id integer primary key autoincrement,"
+            + "examname text,"
+            + "stdname text,"
+            + "score integer,"
+            + "rank integer"
+            + ");";
 
     private Context mContext;
 
@@ -25,6 +31,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_STD);
+        db.execSQL(CREATE_EXAM);
         //Toast.makeText(mContext, "成功创建数据库", Toast.LENGTH_SHORT).show();
     }
 
@@ -34,6 +41,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             case 1:
                 db.execSQL("alter table students add column classname text;");
                 db.execSQL("update students set classname = '默认班级';");
+            case 2:
+                db.execSQL(CREATE_EXAM);
         }
     }
 }

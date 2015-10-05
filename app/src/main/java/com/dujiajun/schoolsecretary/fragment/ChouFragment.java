@@ -82,7 +82,7 @@ public class ChouFragment extends Fragment {
             }
         });
 
-        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 2);
+        dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 3);
         db = dbHelper.getWritableDatabase();
 
         std_names = new ArrayList<>();
