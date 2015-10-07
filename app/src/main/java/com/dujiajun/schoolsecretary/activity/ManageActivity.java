@@ -13,10 +13,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.dujiajun.schoolsecretary.fragment.ManageFragment;
@@ -122,6 +125,7 @@ public class ManageActivity extends AppCompatActivity {
             case R.id.mng_add: {
                 final EditText edit_class = new EditText(this);
                 edit_class.setMaxWidth(12);
+                edit_class.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 new AlertDialog.Builder(this)
                         .setTitle("输入班级名称：")
                         .setView(edit_class)

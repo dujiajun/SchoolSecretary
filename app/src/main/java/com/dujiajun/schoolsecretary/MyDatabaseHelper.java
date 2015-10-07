@@ -16,6 +16,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String CREATE_EXAM = "create table exams ("
             + "id integer primary key autoincrement,"
             + "examname text,"
+            + "classname text,"
             + "stdname text,"
             + "score integer,"
             + "rank integer"

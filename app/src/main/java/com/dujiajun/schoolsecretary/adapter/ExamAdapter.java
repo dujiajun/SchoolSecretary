@@ -25,17 +25,28 @@ public class ExamAdapter extends ArrayAdapter<Exam> {
     public View getView(int position, View convertView, ViewGroup parent) {
         Exam exam = getItem(position);
         View view;
+        ViewHolder viewHolder;
         if (convertView == null) {
             view = LayoutInflater.from(getContext()).inflate(resId, null);
+            viewHolder = new ViewHolder();
+            viewHolder.tv_name = (TextView) view.findViewById(R.id.item_exam_name);
+            viewHolder.tv_score = (TextView) view.findViewById(R.id.item_exam_score);
+            viewHolder.tv_rank = (TextView) view.findViewById(R.id.item_exam_rank);
+            viewHolder.tv_classname = (TextView) view.findViewById(R.id.item_exam_classname);
+            view.setTag(viewHolder);
         } else {
             view = convertView;
+            viewHolder = (ViewHolder) view.getTag();
         }
-        TextView tv1 = (TextView) view.findViewById(R.id.item_exam_name);
-        TextView tv2 = (TextView) view.findViewById(R.id.item_exam_score);
-        TextView tv3 = (TextView) view.findViewById(R.id.item_exam_rank);
-        tv1.setText(exam.getStudentName());
-        tv2.setText("分数：" + String.valueOf(exam.getScore()));
-        tv3.setText("排名：" + String.valueOf(exam.getRank()));
+
+        viewHolder.tv_name.setText(exam.getStudentName());
+        viewHolder.tv_score.setText("分数：" + String.valueOf(exam.getScore()));
+        viewHolder.tv_rank.setText("排名：" + String.valueOf(exam.getRank()));
+        viewHolder.tv_classname.setText(exam.getClassname());
         return view;
+    }
+
+    class ViewHolder {
+        TextView tv_name, tv_rank, tv_score, tv_classname;
     }
 }

@@ -5,17 +5,28 @@ public class Exam {
     private String studentName;
     private int score;
     private int rank;
+    private String classname;
 
-    public Exam(String examName, String studentName) {
+    public Exam(String examName, String classname, String studentName) {
         this.examName = examName;
+        this.classname = classname;
         this.studentName = studentName;
     }
 
-    public Exam(String examName, String studentName, int rank, int score) {
+    public Exam(String examName, String classname, String studentName, int score, int rank) {
         this.examName = examName;
-        this.rank = rank;
-        this.score = score;
+        this.classname = classname;
         this.studentName = studentName;
+        this.score = score;
+        this.rank = rank;
+    }
+
+    public String getClassname() {
+        return classname;
+    }
+
+    public void setClassname(String classname) {
+        this.classname = classname;
     }
 
     public String getExamName() {

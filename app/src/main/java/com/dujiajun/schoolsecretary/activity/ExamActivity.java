@@ -173,6 +173,12 @@ public class ExamActivity extends AppCompatActivity {
         String str = "";
         String examname = xlsFile.getName();
         examname = examname.substring(0, examname.indexOf(".xls"));
+        Cursor cursor = db.query("exams", null, "examname = ?", new String[]{examname}, null, null, null);
+        if (cursor.getCount() != 0) {
+            Toast.makeText(ExamActivity.this, "已存在考试 " + examname, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        cursor.close();
         try {
             Workbook workbook = null;
             try {
@@ -189,29 +195,33 @@ public class ExamActivity extends AppCompatActivity {
                 Toast.makeText(ExamActivity.this, "文件为空，请选择正确的xls文件", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Cell cell1 = null, cell2 = null, cell3 = null;
+            Cell cell1 = null, cell2 = null, cell3 = null, cell4 = null;
             cell1 = sheet.findCell("姓名");
             cell2 = sheet.findCell("分数");
             cell3 = sheet.findCell("排名");
-            if (cell1 == null || cell2 == null || cell3 == null) {
+            cell4 = sheet.findCell("班级");
+            if (cell1 == null || cell2 == null || cell3 == null || cell4 == null) {
                 Toast.makeText(ExamActivity.this, "xls文件内容格式有误，请确认该xls文件内容", Toast.LENGTH_SHORT).show();
                 return;
             }
             //Toast.makeText(ExamActivity.this,String.valueOf(columnCount)+" "+String.valueOf(rowCount), Toast.LENGTH_SHORT).show();
-            int i1 = cell1.getColumn(), i2 = cell2.getColumn(), i3 = cell3.getColumn();
+            int i1 = cell1.getColumn(), i2 = cell2.getColumn(), i3 = cell3.getColumn(), i4 = cell4.getColumn();
             for (int row = 1; row < rowCount; row++) {
                 cell1 = sheet.getCell(i1, row);
                 cell2 = sheet.getCell(i2, row);
                 cell3 = sheet.getCell(i3, row);
+                cell4 = sheet.getCell(i4, row);
                 String name = cell1.getContents();
                 int score = (int) ((NumberCell) cell2).getValue();
                 int rank = (int) ((NumberCell) cell3).getValue();
+                String classname = cell4.getContents();
                 str = str + name;
                 ContentValues value = new ContentValues();
                 value.put("stdname", name);
                 value.put("examname", examname);
                 value.put("score", score);
                 value.put("rank", rank);
+                value.put("classname", classname);
                 db.insert("exams", null, value);
             }
 

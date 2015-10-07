@@ -38,7 +38,6 @@ public class ExamInfoActivity extends AppCompatActivity {
     private ArrayList<Exam> exams;
     //private ArrayList<String> stds;
     private ExamAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,9 +84,10 @@ public class ExamInfoActivity extends AppCompatActivity {
                 String name = cursor.getString(cursor.getColumnIndex("stdname"));
                 int score = cursor.getInt(cursor.getColumnIndex("score"));
                 int rank = cursor.getInt(cursor.getColumnIndex("rank"));
+                String classname = cursor.getString(cursor.getColumnIndex("classname"));
                 //Toast.makeText(ExamInfoActivity.this, name, Toast.LENGTH_SHORT).show();
-                exams.add(new Exam(examname, name, rank, score));
-                Log.d("TAG", name + " " + String.valueOf(exams.size()));
+                exams.add(new Exam(examname, classname, name, score, rank));
+                //Log.d("TAG", name + " " + String.valueOf(exams.size()));
             } while (cursor.moveToNext());
             Collections.sort(exams, new SortByRank());
             adapter.notifyDataSetChanged();
@@ -176,8 +176,8 @@ public class ExamInfoActivity extends AppCompatActivity {
         public int compare(Object lhs, Object rhs) {
             Exam exam1 = (Exam) lhs;
             Exam exam2 = (Exam) rhs;
-            if (exam1.getRank() > exam2.getRank()) return 1;
-            else if (exam1.getRank() == exam2.getRank()) return 0;
+            if (exam1.getScore() > exam2.getScore()) return 1;
+            else if (exam1.getScore() == exam2.getScore()) return 0;
             else return 0;
         }
     }
