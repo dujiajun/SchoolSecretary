@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/mng_xls"
+        android:icon="@mipmap/ic_insert_drive_file_white"
+        android:orderInCategory="100"
+        android:title="从xls文件导入到本班级"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/mng_del"
         android:icon="@mipmap/ic_clear_white"
         android:orderInCategory="90"

@@ -1,6 +1,7 @@
 package com.dujiajun.schoolsecretary.activity;
 
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,18 +9,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.dujiajun.schoolsecretary.fragment.ManageFragment;
@@ -27,11 +28,24 @@ import com.dujiajun.schoolsecretary.MyDatabaseHelper;
 import com.dujiajun.schoolsecretary.adapter.MyPagerAdapter;
 import com.dujiajun.schoolsecretary.R;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import jxl.Cell;
+import jxl.NumberCell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 
 public class ManageActivity extends AppCompatActivity {
 
+    private final int EXCEL_NULL = 1;
+    private final int EXCEL_WRONG = 2;
+    private final int EXCEL_FAIL = 3;
+    private final int EXCEL_SUCCESS = 4;
     private Toolbar toolbar;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -108,7 +122,6 @@ public class ManageActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -123,12 +136,13 @@ public class ManageActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.mng_add: {
-                final EditText edit_class = new EditText(this);
-                edit_class.setMaxWidth(12);
-                edit_class.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                View view = LayoutInflater.from(this).inflate(R.layout.dialog_input, null);
+                final EditText edit_class = (EditText) view.findViewById(R.id.dialog_edit);
+                //edit_class.setMaxWidth(12);
+                //edit_class.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 new AlertDialog.Builder(this)
                         .setTitle("输入班级名称：")
-                        .setView(edit_class)
+                        .setView(view)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -170,18 +184,84 @@ public class ManageActivity extends AppCompatActivity {
                         .show();
             }
                 break;
+            case R.id.mng_xls: {
+                if (fragments.size() == 0) {
+                    Toast.makeText(ManageActivity.this, "请先添加班级", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                FileFilter filter = new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        if (pathname.isDirectory()) return false;
+                        else {
+                            String name = pathname.getName();
+                            return name.endsWith(".xls");
+                        }
+                    }
+                };
+                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/dbs/ss/xls/");
+                final File[] files = file.listFiles(filter);
+                if (files == null) {
+                    Toast.makeText(ManageActivity.this, "请先将xls文件放在/sdcard/dbs/ss/xls/目录下", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                ArrayList<String> filenames = new ArrayList<>();
+                for (File curFile : files) {
+                    filenames.add(curFile.getName());
+                }
+                final String[] strings = new String[filenames.size()];
+                filenames.toArray(strings);
+                new AlertDialog.Builder(this).setTitle("选择XLS文件（存放地址/sdcard/dbs/ss/xls/）")
+                        .setItems(strings, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final int t = which;
+                                new AsyncTask<Void, Void, Integer>() {
+                                    @Override
+                                    protected Integer doInBackground(Void... params) {
+                                        int res = parseExcel(files[t]);
+                                        return res;
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Integer integer) {
+                                        switch (integer) {
+                                            case EXCEL_SUCCESS:
+                                                ((ManageFragment) fragments.get(viewPager.getCurrentItem())).ListRefresh();
+                                                Toast.makeText(ManageActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_FAIL:
+                                                Toast.makeText(ManageActivity.this, "解析xls文件失败", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_NULL:
+                                                Toast.makeText(ManageActivity.this, "文件为空，请选择正确的xls文件", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_WRONG:
+                                                Toast.makeText(ManageActivity.this, "xls文件内容格式有误，请确认该xls文件内容", Toast.LENGTH_SHORT).show();
+                                                break;
+                                        }
+                                    }
+                                }.execute();
+                                //Toast.makeText(ExamActivity.this, files[which].getPath(), Toast.LENGTH_SHORT).show();
+                            }
+                        }).setNegativeButton("取消", null)
+                        .show();
+            }
+            break;
             case R.id.mng_edit: {
                 if (fragments.size() == 0) {
                     Toast.makeText(ManageActivity.this, "请先添加班级", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                final EditText edit_class2 = new EditText(this);
+                View view = LayoutInflater.from(this).inflate(R.layout.dialog_input, null);
+                final EditText edit_class2 = (EditText) view.findViewById(R.id.dialog_edit);
+                //final EditText edit_class2 = new EditText(this);
                 final String origin_classname = titles.get(viewPager.getCurrentItem());
-                edit_class2.setMaxWidth(12);
+                //edit_class2.setMaxWidth(12);
                 edit_class2.setText(origin_classname);
                 new AlertDialog.Builder(this)
                         .setTitle("输入班级名称：")
-                        .setView(edit_class2)
+                        .setView(view)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -233,5 +313,64 @@ public class ManageActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private int parseExcel(File xlsFile) {
+        try {
+            Workbook workbook = null;
+            try {
+                workbook = Workbook.getWorkbook(xlsFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (BiffException e) {
+                e.printStackTrace();
+            }
+            Sheet sheet = workbook.getSheet(0);
+            int columnCount = sheet.getColumns();
+            int rowCount = sheet.getRows();
+            if (rowCount == 1 || columnCount <= 1) {
+                //Toast.makeText(ExamInfoActivity.this, "文件为空，请选择正确的xls文件", Toast.LENGTH_SHORT).show();
+                return EXCEL_NULL;
+            }
+            Cell cell1 = null, cell2 = null, cell3 = null, cell4 = null;
+            //cell4 = sheet.findCell("班级");
+            cell1 = sheet.findCell("姓名");
+            cell2 = sheet.findCell("电话");
+            cell3 = sheet.findCell("评语");
+            if (cell1 == null || cell2 == null || cell3 == null) {
+                //Toast.makeText(ExamInfoActivity.this, "xls文件内容格式有误，请确认该xls文件内容", Toast.LENGTH_SHORT).show();
+                //Log.d("TAG", String.valueOf(cell1 == null) + " " + String.valueOf(cell2 == null) + " " + String.valueOf(cell3 == null));
+                return EXCEL_WRONG;
+            }
+            String classname = titles.get(viewPager.getCurrentItem());
+            //Toast.makeText(ExamActivity.this,String.valueOf(columnCount)+" "+String.valueOf(rowCount), Toast.LENGTH_SHORT).show();
+            int i1 = cell1.getColumn(), i2 = cell2.getColumn(), i3 = cell3.getColumn();
+            int begin_row = cell1.getRow() + 1;
+            for (int row = begin_row; row < rowCount; row++) {
+                cell1 = sheet.getCell(i1, row);
+                cell2 = sheet.getCell(i2, row);
+                cell3 = sheet.getCell(i3, row);
+                String name = cell1.getContents();
+                String phone = cell2.getContents();
+                String remark = cell3.getContents();
+                Cursor cursor = db.query("students", null, "classname = ? and name = ?", new String[]{classname, name}, null, null, null);
+                if (cursor.getCount() != 0 || name.equals("")) {
+                    cursor.close();
+                    continue;
+                }
+                cursor.close();
+                ContentValues value = new ContentValues();
+                value.put("name", name);
+                value.put("classname", classname);
+                value.put("phone", phone);
+                value.put("remark", remark);
+                db.insert("students", null, value);
+            }
+
+        } catch (Exception e) {
+        }
+        //text_test.setText(str);
+        //Toast.makeText(ExamInfoActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
+        return EXCEL_SUCCESS;
     }
 }

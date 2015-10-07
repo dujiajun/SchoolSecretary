@@ -98,6 +98,7 @@ public class ChouFragment extends Fragment {
         }
         cursor1.close();
         spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, classnames);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

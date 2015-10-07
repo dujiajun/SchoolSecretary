@@ -7,7 +7,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="班级：" />
+
+        <Spinner
+            android:id="@+id/dialog_exam_class"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
         android:orientation="horizontal">
 
         <TextView
@@ -15,10 +30,10 @@
             android:layout_height="wrap_content"
             android:text="姓名：" />
 
-        <EditText
+        <Spinner
             android:id="@+id/dialog_exam_std_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout

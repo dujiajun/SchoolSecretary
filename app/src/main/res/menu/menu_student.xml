@@ -1,6 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/std_analyse"
+        android:icon="@mipmap/ic_check_white"
+        android:orderInCategory="70"
+        android:title="成绩分析"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/std_del"
         android:icon="@mipmap/ic_clear_white"
         android:orderInCategory="80"

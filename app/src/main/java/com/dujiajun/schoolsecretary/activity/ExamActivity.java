@@ -38,6 +38,11 @@ import jxl.read.biff.BiffException;
 
 public class ExamActivity extends AppCompatActivity {
 
+    private final int EXCEL_EXIST = 0;
+    private final int EXCEL_NULL = 1;
+    private final int EXCEL_WRONG = 2;
+    private final int EXCEL_FAIL = 3;
+    private final int EXCEL_SUCCESS = 4;
     //private TextView text_test;
     private ListView exam_list;
     private ArrayList<String> exams;
@@ -151,8 +156,36 @@ public class ExamActivity extends AppCompatActivity {
                         .setItems(strings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                parseExcel(files[which]);
-                                ListRefresh();
+                                final int t = which;
+                                new AsyncTask<Void, Void, Integer>() {
+                                    @Override
+                                    protected Integer doInBackground(Void... params) {
+                                        int res = parseExcel(files[t]);
+                                        return res;
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Integer integer) {
+                                        switch (integer) {
+                                            case EXCEL_SUCCESS:
+                                                ListRefresh();
+                                                Toast.makeText(ExamActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_FAIL:
+                                                Toast.makeText(ExamActivity.this, "解析xls文件失败", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_EXIST:
+                                                Toast.makeText(ExamActivity.this, "已存在考试", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_NULL:
+                                                Toast.makeText(ExamActivity.this, "文件为空，请选择正确的xls文件", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case EXCEL_WRONG:
+                                                Toast.makeText(ExamActivity.this, "xls文件内容格式有误，请确认该xls文件内容", Toast.LENGTH_SHORT).show();
+                                                break;
+                                        }
+                                    }
+                                }.execute();
                                 //Toast.makeText(ExamActivity.this, files[which].getPath(), Toast.LENGTH_SHORT).show();
                             }
                         }).setNegativeButton("取消", null)
@@ -169,14 +202,14 @@ public class ExamActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void parseExcel(File xlsFile) {
+    private int parseExcel(File xlsFile) {
         String str = "";
         String examname = xlsFile.getName();
         examname = examname.substring(0, examname.indexOf(".xls"));
         Cursor cursor = db.query("exams", null, "examname = ?", new String[]{examname}, null, null, null);
         if (cursor.getCount() != 0) {
-            Toast.makeText(ExamActivity.this, "已存在考试 " + examname, Toast.LENGTH_SHORT).show();
-            return;
+            //
+            return EXCEL_EXIST;
         }
         cursor.close();
         try {
@@ -192,8 +225,8 @@ public class ExamActivity extends AppCompatActivity {
             int columnCount = sheet.getColumns();
             int rowCount = sheet.getRows();
             if (rowCount == 1 || columnCount <= 1) {
-                Toast.makeText(ExamActivity.this, "文件为空，请选择正确的xls文件", Toast.LENGTH_SHORT).show();
-                return;
+                //
+                return EXCEL_NULL;
             }
             Cell cell1 = null, cell2 = null, cell3 = null, cell4 = null;
             cell1 = sheet.findCell("姓名");
@@ -201,12 +234,13 @@ public class ExamActivity extends AppCompatActivity {
             cell3 = sheet.findCell("排名");
             cell4 = sheet.findCell("班级");
             if (cell1 == null || cell2 == null || cell3 == null || cell4 == null) {
-                Toast.makeText(ExamActivity.this, "xls文件内容格式有误，请确认该xls文件内容", Toast.LENGTH_SHORT).show();
-                return;
+                //
+                return EXCEL_WRONG;
             }
             //Toast.makeText(ExamActivity.this,String.valueOf(columnCount)+" "+String.valueOf(rowCount), Toast.LENGTH_SHORT).show();
             int i1 = cell1.getColumn(), i2 = cell2.getColumn(), i3 = cell3.getColumn(), i4 = cell4.getColumn();
-            for (int row = 1; row < rowCount; row++) {
+            int begin_row = cell1.getRow() + 1;
+            for (int row = begin_row; row < rowCount; row++) {
                 cell1 = sheet.getCell(i1, row);
                 cell2 = sheet.getCell(i2, row);
                 cell3 = sheet.getCell(i3, row);
@@ -228,10 +262,11 @@ public class ExamActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
         if (str.equals("")) {
-            Toast.makeText(ExamActivity.this, "解析xls文件失败", Toast.LENGTH_SHORT).show();
-            return;
+            //
+            return EXCEL_FAIL;
         }
         //text_test.setText(str);
-        Toast.makeText(ExamActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
+
+        return EXCEL_SUCCESS;
     }
 }

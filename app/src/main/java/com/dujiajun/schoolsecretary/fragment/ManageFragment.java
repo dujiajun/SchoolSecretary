@@ -79,7 +79,7 @@ public class ManageFragment extends Fragment {
         ListRefresh();
     }
 
-    private void ListRefresh() {
+    public void ListRefresh() {
         std_names.clear();
         stdlist.clear();
         Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
