@@ -30,14 +30,23 @@ import com.dujiajun.schoolsecretary.R;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import jxl.Cell;
 import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 
 
 public class ManageActivity extends AppCompatActivity {
@@ -310,6 +319,10 @@ public class ManageActivity extends AppCompatActivity {
                         .show();
             }
             break;
+            case R.id.mng_xls_backup: {
+                BackUpToExcel();
+            }
+            break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -372,5 +385,73 @@ public class ManageActivity extends AppCompatActivity {
         //text_test.setText(str);
         //Toast.makeText(ExamInfoActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
         return EXCEL_SUCCESS;
+    }
+
+    private void BackUpToExcel() {
+        String[] xls_titles = new String[]{"班级", "姓名", "电话", "评语"};
+        long time = System.currentTimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        File outFile = new File(Environment.getExternalStorageDirectory()
+                + "/dbs/ss/backup/" + format.format(new Date(time)) + ".xls");
+        //Toast.makeText(ManageActivity.this, outputFileName, Toast.LENGTH_SHORT).show();
+        Log.d("TAG", outFile.toString());
+        WritableWorkbook wwb = null;
+        try {
+            //OutputStream os = new FileOutputStream(outputFileName);
+            wwb = Workbook.createWorkbook(outFile);
+        } catch (FileNotFoundException e) {
+            //Toast.makeText(ManageActivity.this, "1", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (IOException e) {
+            //Toast.makeText(ManageActivity.this, "2", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        if (wwb == null) {
+            return;
+        }
+        try {
+            WritableSheet sheet = wwb.createSheet("学生", 0);
+            Label label;
+            for (int i = 0; i < xls_titles.length; i++) {
+                label = new Label(i, 0, xls_titles[i]);
+
+                sheet.addCell(label);
+
+            }
+            Cursor cursor = db.rawQuery("select * from students;", null);
+            if (cursor.moveToFirst()) {
+                int row = 1;
+                do {
+                    String classname = cursor.getString(cursor.getColumnIndex("classname"));
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    String phone = cursor.getString(cursor.getColumnIndex("phone"));
+                    String remark = cursor.getString(cursor.getColumnIndex("remark"));
+                    label = new Label(0, row, classname);
+                    sheet.addCell(label);
+                    label = new Label(1, row, name);
+                    sheet.addCell(label);
+                    label = new Label(2, row, phone);
+                    sheet.addCell(label);
+                    label = new Label(3, row, remark);
+                    sheet.addCell(label);
+                    row = row + 1;
+                } while (cursor.moveToNext());
+            } else {
+                return;
+            }
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
+        try {
+            wwb.write();
+            wwb.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
+
+        Toast.makeText(ManageActivity.this, "学生信息已保存到 " + outFile.toString(), Toast.LENGTH_SHORT).show();
+
     }
 }

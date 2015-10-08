@@ -2,6 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/mng_xls_backup"
+        android:icon="@mipmap/ic_insert_drive_file_white"
+        android:orderInCategory="110"
+        android:title="导出到xls文件"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/mng_xls"
         android:icon="@mipmap/ic_insert_drive_file_white"
         android:orderInCategory="100"
