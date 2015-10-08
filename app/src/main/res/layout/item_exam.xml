@@ -12,7 +12,10 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
-        android:text="杜佳骏"
+        android:ellipsize="end"
+        android:maxWidth="120dp"
+        android:singleLine="true"
+        android:text="杜佳骏haha"
         android:textSize="24sp" />
 
     <TextView
@@ -21,6 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/item_exam_name"
         android:layout_centerHorizontal="true"
+        android:ellipsize="end"
+        android:maxWidth="108dp"
+        android:singleLine="true"
         android:text="分数：660"
         android:textSize="18sp" />
 
@@ -33,6 +39,9 @@
         android:layout_alignParentRight="true"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:maxWidth="108dp"
+        android:singleLine="true"
         android:text="排名：13"
         android:textSize="18sp" />
 
@@ -48,6 +57,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="8dp"
+        android:singleLine="true"
         android:text="高2016级8班"
         android:textSize="14sp" />
 </RelativeLayout>

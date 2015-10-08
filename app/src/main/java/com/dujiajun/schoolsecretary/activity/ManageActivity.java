@@ -289,6 +289,7 @@ public class ManageActivity extends AppCompatActivity {
                                     }
                                     cursor.close();
                                     db.execSQL("update students set classname = ? where classname = ?", new String[]{class_name, origin_classname});
+                                    db.execSQL("update exams set classname = ? where classname = ?", new String[]{class_name, origin_classname});
                                     finish();
                                     startActivity(new Intent(ManageActivity.this, ManageActivity.class));
                                 }
@@ -311,6 +312,7 @@ public class ManageActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 db.delete("students", "classname = ?", new String[]{origin_classname});
+                                db.delete("exams", "classname = ?", new String[]{origin_classname});
                                 finish();
                                 startActivity(new Intent(ManageActivity.this, ManageActivity.class));
                             }

@@ -1,11 +1,13 @@
 package com.dujiajun.schoolsecretary.fragment;
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 
 import com.dujiajun.schoolsecretary.MyDatabaseHelper;
 import com.dujiajun.schoolsecretary.R;
+import com.dujiajun.schoolsecretary.model.Exam;
 import com.dujiajun.schoolsecretary.model.Student;
 import com.dujiajun.schoolsecretary.activity.StudentInfoActivity;
 
@@ -70,6 +73,25 @@ public class ManageFragment extends Fragment {
         dbHelper = new MyDatabaseHelper(getActivity(), "student.db", null, 3);
         db = dbHelper.getWritableDatabase();
         ListRefresh();
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("确认删除 " + stdlist.get(position).getName() + " ?")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Student std = stdlist.get(position);
+                                db.delete("exams", "classname = ? and name = ?"
+                                        , new String[]{std.getClassname(), std.getName()});
+                                ListRefresh();
+                            }
+                        })
+                        .show();
+                return false;
+            }
+        });
         return view;
     }
 

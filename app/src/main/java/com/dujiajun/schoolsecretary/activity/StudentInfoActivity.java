@@ -55,6 +55,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         isEdit = i.getBooleanExtra("isEdit", false);
         classname = i.getStringExtra("classname");
         idname = i.getStringExtra("id");
+        filename = Environment.getExternalStorageDirectory() + "/dbs/ss/std_img/" + idname;
         if (isEdit) {
             String name = i.getStringExtra("name");
             originname = name;
@@ -69,17 +70,17 @@ public class StudentInfoActivity extends AppCompatActivity {
             if (!remark.equals("")) {
                 edit_remark.setText(remark);
             }
+            //filename = "std_img/"+idname;
+            File file = new File(filename);
+            if (file.exists()) {
+                Bitmap bitmap = BitmapFactory.decodeFile(filename);
+                imgview1.setImageBitmap(bitmap);
+            }
         }
         else{
             toolbar.setTitle("添加学生");
         }
-        filename = Environment.getExternalStorageDirectory() + "/dbs/ss/std_img/" + idname;
-        //filename = "std_img/"+idname;
-        File file = new File(filename);
-        if (file.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(filename);
-            imgview1.setImageBitmap(bitmap);
-        }
+
     }
 
     protected void UIInit() {
@@ -179,11 +180,12 @@ public class StudentInfoActivity extends AppCompatActivity {
                 if(isEdit) {
                     new AlertDialog.Builder(StudentInfoActivity.this)
                             .setTitle("确定删除")
-                            .setMessage("删除后将不能恢复，确定删除？")
+                            .setMessage("删除该生将一并删除成绩，且不能恢复，确定删除？")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     db.delete("students", "name = ? and classname = ?", new String[]{originname, classname});
+                                    db.delete("exams", "stdname = ? and classname = ?", new String[]{originname, classname});
                                     finish();
                                 }
                             })
@@ -227,6 +229,7 @@ public class StudentInfoActivity extends AppCompatActivity {
                         values.put("phone", phone);
                         values.put("remark", remark);
                         db.update("students", values, "name = ? and classname = ?", new String[]{originname, classname});
+                        db.execSQL("update exams set stdname = ? where stdname = ?;", new String[]{name, originname});
                     }else{
 
                         Cursor cursor = db.query("students", null,
@@ -249,6 +252,13 @@ public class StudentInfoActivity extends AppCompatActivity {
                 }
 
                 break;
+            case R.id.std_analyse: {
+                Intent intent = new Intent(StudentInfoActivity.this, ChartActivity.class);
+                intent.putExtra("stdname", originname);
+                intent.putExtra("classname", classname);
+                startActivity(intent);
+            }
+            break;
         }
         return super.onOptionsItemSelected(item);
     }

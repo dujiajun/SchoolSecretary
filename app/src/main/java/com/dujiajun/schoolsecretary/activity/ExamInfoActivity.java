@@ -60,6 +60,13 @@ public class ExamInfoActivity extends AppCompatActivity {
     private boolean bj = false;
     private int spinner_c_now = 0;
     private int spinner_s_now = 0;
+    private Comparator<Exam> SortByScore = new Comparator<Exam>() {
+        @Override
+        public int compare(Exam lhs, Exam rhs) {
+            if (lhs.getScore() > rhs.getScore()) return 1;
+            else return 0;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +137,25 @@ public class ExamInfoActivity extends AppCompatActivity {
         //adapter = new ArrayAdapter<>(ExamInfoActivity.this,android.R.layout.simple_list_item_1,stds);
         adapter = new ExamAdapter(this, R.layout.item_exam, exams);
         listView.setAdapter(adapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                new AlertDialog.Builder(ExamInfoActivity.this)
+                        .setTitle("确认删除 " + exams.get(position).getStudentName() + " ?")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Exam exam = exams.get(position);
+                                db.delete("exams", "classname = ? and stdname = ? and examname = ?"
+                                        , new String[]{exam.getClassname(), exam.getStudentName(), exam.getExamName()});
+                                ListRefresh();
+                            }
+                        })
+                        .show();
+                return false;
+            }
+        });
     }
 
     private void ListRefresh() {
@@ -145,10 +171,10 @@ public class ExamInfoActivity extends AppCompatActivity {
                 exams.add(new Exam(examname, classname, name, score, rank));
                 //Log.d("TAG", name + " " + String.valueOf(exams.size()));
             } while (cursor.moveToNext());
-            Collections.sort(exams, new SortByRank());
-            adapter.notifyDataSetChanged();
+            Collections.sort(exams, SortByScore);
         }
         cursor.close();
+        adapter.notifyDataSetChanged();
     }
 
     private int parseExcel(File xlsFile) {
@@ -303,8 +329,8 @@ public class ExamInfoActivity extends AppCompatActivity {
                                 else rank = Integer.parseInt(rankstring);
                                 String stdname = stdnames.get(spinner_s_now);
                                 String classname = classnames.get(spinner_c_now);
-                                Cursor cursor = db.query("exams", null, "stdname = ? and classname = ?"
-                                        , new String[]{stdname, classname}, null, null, null);
+                                Cursor cursor = db.query("exams", null, "stdname = ? and classname = ? and examname = ?"
+                                        , new String[]{stdname, classname, examname}, null, null, null);
                                 if (cursor.getCount() != 0) {
                                     Toast.makeText(ExamInfoActivity.this, "已存在记录", Toast.LENGTH_SHORT).show();
                                     cursor.close();
@@ -437,17 +463,5 @@ public class ExamInfoActivity extends AppCompatActivity {
             break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    class SortByRank implements Comparator {
-
-        @Override
-        public int compare(Object lhs, Object rhs) {
-            Exam exam1 = (Exam) lhs;
-            Exam exam2 = (Exam) rhs;
-            if (exam1.getScore() > exam2.getScore()) return 1;
-            else if (exam1.getScore() == exam2.getScore()) return 0;
-            else return 0;
-        }
     }
 }
