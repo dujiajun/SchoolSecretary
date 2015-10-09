@@ -82,11 +82,13 @@ public class ChartActivity extends AppCompatActivity {
         }
 
         Line lineS = new Line(value_score);
-        lineS.setColor(R.color.chart_line1);
+        //lineS.setColor(Color.(R.color.chart_line1));
+        lineS.setColor(Color.parseColor("#673ab7"));
         lineS.setHasLabels(true);
 
         Line lineR = new Line(value_rank);
-        lineR.setColor(R.color.chart_line2);
+        //lineR.setColor(getResources().getColor(R.color.chart_line2));
+        lineS.setColor(Color.parseColor("#cddc39"));
         lineR.setHasLabels(true);
 
         List<Line> lines = new ArrayList<>();

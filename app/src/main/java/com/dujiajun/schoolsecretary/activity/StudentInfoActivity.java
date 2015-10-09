@@ -42,8 +42,9 @@ public class StudentInfoActivity extends AppCompatActivity {
     private Boolean isEdit;
     private String originname;
     private String classname;
-    private String idname;
     private String filename;
+    private Bitmap bitmap_main;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +55,9 @@ public class StudentInfoActivity extends AppCompatActivity {
         Intent i = getIntent();
         isEdit = i.getBooleanExtra("isEdit", false);
         classname = i.getStringExtra("classname");
-        idname = i.getStringExtra("id");
-        filename = Environment.getExternalStorageDirectory() + "/dbs/ss/std_img/" + idname;
+
         if (isEdit) {
+            String idname = i.getStringExtra("id");
             String name = i.getStringExtra("name");
             originname = name;
             String phone = i.getStringExtra("phone");
@@ -70,6 +71,7 @@ public class StudentInfoActivity extends AppCompatActivity {
             if (!remark.equals("")) {
                 edit_remark.setText(remark);
             }
+            filename = Environment.getExternalStorageDirectory() + "/dbs/ss/std_img/" + idname;
             //filename = "std_img/"+idname;
             File file = new File(filename);
             if (file.exists()) {
@@ -110,7 +112,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         img_btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(StudentInfoActivity.this, "该功能属实验性功能，为防止意外，请选择1M以内的图片", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudentInfoActivity.this, "该功能属实验性功能，为防止意外，请选择600KB以内的图片", Toast.LENGTH_SHORT).show();
                 /*File file1 = new File(Environment.getExternalStorageDirectory(), "img.jpg");
                 try {
                     if (file1.exists()) {
@@ -139,22 +141,10 @@ public class StudentInfoActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     try {
                         Uri uri = data.getData();
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
-                        imgview1.setImageBitmap(bitmap);
-                        File file = new File(filename);
-                        //Log.d("TAG",filename);
-                        if (file.exists()) file.delete();
-                        else file.getParentFile().mkdirs();
-                        file.createNewFile();//Log.d("TAG","ERROR");
-                        FileOutputStream out = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                        out.flush();
-                        out.close();
+                        bitmap_main = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+                        imgview1.setImageBitmap(bitmap_main);
                         //Log.d("TAG",String.valueOf(file.exists()));
                     } catch (FileNotFoundException e) {
-                        //Log.d("TAG",e.getMessage());
-                        e.printStackTrace();
-                    } catch (IOException e) {
                         //Log.d("TAG",e.getMessage());
                         e.printStackTrace();
                     }
@@ -214,7 +204,6 @@ public class StudentInfoActivity extends AppCompatActivity {
                     Toast.makeText(StudentInfoActivity.this, "没有填写姓名", Toast.LENGTH_SHORT).show();
                     return false;
                 } else {
-
                     if(isEdit){
                         if(!name.equals(originname)){
                             Cursor cursor = db.query("students", null,
@@ -238,15 +227,36 @@ public class StudentInfoActivity extends AppCompatActivity {
                             Toast.makeText(StudentInfoActivity.this, "已经存在学生" + name, Toast.LENGTH_SHORT).show();
                             return false;
                         }
-
+                        cursor.close();
                         ContentValues values = new ContentValues();
                         values.put("name", name);
                         values.put("phone", phone);
                         values.put("remark", remark);
                         values.put("classname", classname);
                         db.insert("students", null, values);
-                    }
 
+                    }
+                    if (bitmap_main != null) {
+                        Cursor cursor = db.rawQuery("select * from students where name = ? and classname = ?;", new String[]{name, classname});
+                        if (cursor.moveToFirst()) {
+                            String idname = String.valueOf(cursor.getInt(cursor.getColumnIndex("id")));
+                            cursor.close();
+                            filename = Environment.getExternalStorageDirectory() + "/dbs/ss/std_img/" + idname;
+                            File file = new File(filename);
+                            //Log.d("TAG",filename);
+                            try {
+                                if (file.exists()) file.delete();
+                                else file.getParentFile().mkdirs();
+                                file.createNewFile();//Log.d("TAG","ERROR");
+                                FileOutputStream out = new FileOutputStream(file);
+                                bitmap_main.compress(Bitmap.CompressFormat.PNG, 100, out);
+                                out.flush();
+                                out.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                     Toast.makeText(StudentInfoActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
                     finish();
                 }
