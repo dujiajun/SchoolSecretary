@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -139,23 +140,175 @@ public class ExamInfoActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            public boolean onItemLongClick(final AdapterView<?> parent, View view, final int position, long id) {
+                String[] actions = new String[]{"分析", "修改", "删除"};
+
                 new AlertDialog.Builder(ExamInfoActivity.this)
-                        .setTitle("确认删除 " + exams.get(position).getStudentName() + " ?")
-                        .setNegativeButton("取消", null)
-                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        .setTitle("请选择操作：")
+                        .setItems(actions, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Exam exam = exams.get(position);
-                                db.delete("exams", "classname = ? and stdname = ? and examname = ?"
-                                        , new String[]{exam.getClassname(), exam.getStudentName(), exam.getExamName()});
-                                ListRefresh();
+                                if (which == 2) {
+                                    DeleteDialog(position);
+                                    return;
+                                }
+                                if (which == 1) {
+                                    Exam exam = exams.get(position);
+                                    ModifyDialog(exam);
+                                    return;
+                                }
+                                if (which == 0) {
+                                    Intent intent = new Intent(ExamInfoActivity.this, ChartActivity.class);
+                                    intent.putExtra("stdname", exams.get(position).getStudentName());
+                                    intent.putExtra("classname", exams.get(position).getClassname());
+                                    startActivity(intent);
+                                }
                             }
-                        })
-                        .show();
+                        }).show();
                 return false;
             }
         });
+    }
+
+    private void DeleteDialog(final int position) {
+        new AlertDialog.Builder(ExamInfoActivity.this)
+                .setTitle("确认删除 " + exams.get(position).getStudentName() + " ?")
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Exam exam = exams.get(position);
+                        db.delete("exams", "classname = ? and stdname = ? and examname = ?"
+                                , new String[]{exam.getClassname(), exam.getStudentName(), exam.getExamName()});
+                        ListRefresh();
+                    }
+                })
+                .show();
+    }
+
+    private void ModifyDialog(Exam exam) {
+        final String class_name = exam.getClassname();
+        final String std_name = exam.getStudentName();
+        final int p_score = exam.getScore();
+        final int p_rank = exam.getRank();
+        View view = LayoutInflater.from(ExamInfoActivity.this).inflate(R.layout.dialog_exam_std, null);
+
+        final Spinner spinner_class = (Spinner) view.findViewById(R.id.dialog_exam_class);
+        final Spinner spinner_std = (Spinner) view.findViewById(R.id.dialog_exam_std_name);
+        final ArrayList<String> classnames = new ArrayList<>();
+        final ArrayList<String> stdnames = new ArrayList<>();
+        //Log.d("TAG","1");
+        Cursor cursor1 = db.rawQuery("select distinct classname from students;", null);
+        if (cursor1.moveToFirst()) {
+            do {
+                String classname = cursor1.getString(cursor1.getColumnIndex("classname"));
+                classnames.add(classname);
+            } while (cursor1.moveToNext());
+        }
+        cursor1.close();
+
+        cursor1 = db.rawQuery("select * from students where classname = ?;", new String[]{class_name});
+        if (cursor1.moveToFirst()) {
+            do {
+                String stdname = cursor1.getString(cursor1.getColumnIndex("name"));
+                stdnames.add(stdname);
+            } while (cursor1.moveToNext());
+        }
+        cursor1.close();
+        spinner_c_now = classnames.indexOf(class_name);
+        spinner_s_now = stdnames.indexOf(std_name);
+        //Log.d("TAG", "2");
+        final ArrayAdapter<String> adapter_class = new ArrayAdapter<>(ExamInfoActivity.this, android.R.layout.simple_spinner_item, classnames);
+        adapter_class.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_class.setAdapter(adapter_class);
+        //Log.d("TAG", "3");
+        spinner_class.setSelection(spinner_c_now, true);
+
+        final ArrayAdapter<String> adapter_std = new ArrayAdapter<>(ExamInfoActivity.this, android.R.layout.simple_spinner_item, stdnames);
+        adapter_std.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_std.setAdapter(adapter_std);
+        spinner_class.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinner_c_now = position;
+                String classname = parent.getItemAtPosition(position).toString();
+                Cursor cursor = db.query("Students", null, "classname = ?", new String[]{classname}, null, null, null);
+                stdnames.clear();
+                if (cursor.moveToFirst()) {
+                    do {
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        //Log.d("TAG",classname+" "+name);
+                        stdnames.add(name);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                adapter_std.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        //Log.d("TAG", "4");
+        spinner_std.setSelection(spinner_s_now, true);
+        //Log.d("TAG",class_name+" "+std_name + " "+classnames.indexOf(class_name)+stdnames.indexOf(std_name));
+        spinner_std.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinner_s_now = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        //Log.d("TAG", "6");
+        //Toast.makeText(ExamInfoActivity.this, String.valueOf(spinner_c_now)+" "+String.valueOf(spinner_s_now), Toast.LENGTH_SHORT).show();
+        final EditText edit_score = (EditText) view.findViewById(R.id.dialog_exam_std_score);
+        edit_score.setText(String.valueOf(p_score));
+        final EditText edit_rank = (EditText) view.findViewById(R.id.dialog_exam_std_rank);
+        edit_rank.setText(String.valueOf(p_rank));
+        new AlertDialog.Builder(this)
+                .setView(view)
+                .setTitle("详情：")
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String scorestring = edit_score.getText().toString();
+                        String rankstring = edit_rank.getText().toString();
+                        int score, rank;
+                        if (scorestring.equals("")) score = 0;
+                        else score = Integer.parseInt(scorestring);
+                        if (rankstring.equals("")) rank = 0;
+                        else rank = Integer.parseInt(rankstring);
+                        String stdname = stdnames.get(spinner_s_now);
+                        String classname = classnames.get(spinner_c_now);
+                        //Log.d("TAG","7");
+                        if (!classname.equals(class_name) || !stdname.equals(std_name)) {
+                            Cursor cursor = db.query("exams", null, "stdname = ? and classname = ? and examname = ?"
+                                    , new String[]{stdname, classname, examname}, null, null, null);
+                            if (cursor.getCount() != 0) {
+                                Toast.makeText(ExamInfoActivity.this, "已存在记录", Toast.LENGTH_SHORT).show();
+                                cursor.close();
+                                return;
+                            }
+                            cursor.close();
+                        }
+                        //Log.d("TAG","8");
+                        ContentValues values = new ContentValues();
+                        values.put("classname", classnames.get(spinner_c_now));
+                        values.put("stdname", stdnames.get(spinner_s_now));
+                        values.put("score", score);
+                        values.put("rank", rank);
+                        db.update("exams", values, "classname = ? and stdname = ? and examname = ?", new String[]{class_name, std_name, examname});
+                        ListRefresh();
+                        //Log.d("TAG", "9");
+                        Toast.makeText(ExamInfoActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
+
     }
 
     private void ListRefresh() {
@@ -248,6 +401,8 @@ public class ExamInfoActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.exam_info_insert: {
+                spinner_s_now = 0;
+                spinner_c_now = 0;
                 View view = LayoutInflater.from(this).inflate(R.layout.dialog_exam_std, null);
                 final Spinner spinner_class = (Spinner) view.findViewById(R.id.dialog_exam_class);
                 final Spinner spinner_std = (Spinner) view.findViewById(R.id.dialog_exam_std_name);
