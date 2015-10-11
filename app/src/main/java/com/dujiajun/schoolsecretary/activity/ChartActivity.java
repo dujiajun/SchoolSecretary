@@ -50,7 +50,11 @@ public class ChartActivity extends AppCompatActivity {
         List<PointValue> value_score = new ArrayList<>();
         List<PointValue> value_rank = new ArrayList<>();
         List<AxisValue> axisXValues = new ArrayList<>();
-        int maxR = 0;
+        List<AxisValue> axisYValues = new ArrayList<>();
+        List<AxisValue> axisRValues = new ArrayList<>();
+        List<Integer> scores = new ArrayList<>();
+        List<Integer> ranks = new ArrayList<>();
+        int maxR = 0, maxY = 0;
         Intent i = getIntent();
         std_name = i.getStringExtra("stdname");
         classname = i.getStringExtra("classname");
@@ -64,7 +68,7 @@ public class ChartActivity extends AppCompatActivity {
                 Toast.makeText(ChartActivity.this, "仅有一次成绩记录，无法做出统计图", Toast.LENGTH_SHORT).show();
                 finish();
             }
-            int j = 1;
+            int j = 0;
             do {
                 String examname = cursor.getString(cursor.getColumnIndex("examname"));
                 //Toast.makeText(ChartActivity.this, examname, Toast.LENGTH_SHORT).show();
@@ -72,14 +76,17 @@ public class ChartActivity extends AppCompatActivity {
                 int score = cursor.getInt(cursor.getColumnIndex("score"));
                 //maxY = Math.max(maxY,score);
                 maxR = Math.max(maxR, rank);
-                PointValue point;
-                point = new PointValue(j, rank);
-                point.setLabel(String.valueOf(rank));
+                maxY = Math.max(maxR, score);
+                ranks.add(rank);
+                scores.add(score);
+                //PointValue point;
+                //point = new PointValue(j, rank);
+                //point.setLabel(String.valueOf(rank));
                 axisXValues.add(new AxisValue(j).setLabel(examname));
-                value_rank.add(point);
-                point = new PointValue(j, score);
-                point.setLabel(String.valueOf(score));
-                value_score.add(point);
+                //value_rank.add(point);
+                //point = new PointValue(j, score);
+                //point.setLabel(String.valueOf(score));
+                //value_score.add(point);
                 j++;
             } while (cursor.moveToNext());
 
@@ -89,6 +96,46 @@ public class ChartActivity extends AppCompatActivity {
             finish();
         }
 
+        Axis axisY;
+        Axis axisX = new Axis(axisXValues);
+        Axis axisR;
+
+        float scale = 0;
+        if (maxY > maxR) {
+            scale = maxY / maxR;
+            axisY = new Axis();
+
+            for (int j = 0; j < ranks.size(); j++) {
+                int rank = ranks.get(j);
+                int score = scores.get(j);
+                axisRValues.add(new AxisValue(rank * scale).setLabel(String.valueOf(rank)));
+                value_rank.add(new PointValue(j, rank * scale).setLabel(String.valueOf(rank)));
+                value_score.add(new PointValue(j, score).setLabel(String.valueOf(score)));
+            }
+            axisR = new Axis(axisRValues);
+
+        } else if (maxR > maxY) {
+            scale = maxR / maxY;
+            axisR = new Axis();
+
+            for (int j = 0; j < scores.size(); j++) {
+                int rank = ranks.get(j);
+                int score = scores.get(j);
+                axisYValues.add(new AxisValue(score * scale).setLabel(String.valueOf(score)));
+                value_rank.add(new PointValue(j, rank).setLabel(String.valueOf(rank)));
+                value_score.add(new PointValue(j, score * scale).setLabel(String.valueOf(score)));
+            }
+            axisY = new Axis(axisYValues);
+        } else {
+            axisY = new Axis();
+            axisR = new Axis();
+            for (int j = 0; j < scores.size(); j++) {
+                int rank = ranks.get(j);
+                int score = scores.get(j);
+                value_rank.add(new PointValue(j, rank).setLabel(String.valueOf(rank)));
+                value_score.add(new PointValue(j, score).setLabel(String.valueOf(score)));
+            }
+        }
 
         Line lineS = new Line(value_score);
         //lineS.setColor(Color.(R.color.chart_line1));
@@ -107,16 +154,16 @@ public class ChartActivity extends AppCompatActivity {
         LineChartData data = new LineChartData();
 
         data.setLines(lines);
-        Axis axisY = new Axis();
+
         axisY.setName("成绩");
         axisY.setTextColor(ChartUtils.COLORS[0]);
 
-        Axis axisX = new Axis(axisXValues);
+
         axisX.setName("考试");
         axisX.setTextColor(Color.BLACK);
         axisX.setHasTiltedLabels(true);
 
-        Axis axisR = new Axis();
+
         axisR.setName("排名");
         axisR.setTextColor(ChartUtils.COLORS[1]);
 

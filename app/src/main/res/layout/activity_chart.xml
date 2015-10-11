@@ -12,7 +12,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:navigationIcon="@mipmap/ic_arrow_back_white"
-        app:title="分析"></android.support.v7.widget.Toolbar>
+        app:title="成绩分析"></android.support.v7.widget.Toolbar>
 
     <lecho.lib.hellocharts.view.LineChartView
         android:id="@+id/chart"
