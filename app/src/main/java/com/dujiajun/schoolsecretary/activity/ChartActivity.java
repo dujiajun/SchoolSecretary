@@ -45,7 +45,7 @@ public class ChartActivity extends AppCompatActivity {
                 finish();
             }
         });
-        Toast.makeText(ChartActivity.this, "成绩分析功能完善中", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ChartActivity.this, "成绩分析功能完善中", Toast.LENGTH_SHORT).show();
         chart = (LineChartView) findViewById(R.id.chart);
         List<PointValue> value_score = new ArrayList<>();
         List<PointValue> value_rank = new ArrayList<>();
